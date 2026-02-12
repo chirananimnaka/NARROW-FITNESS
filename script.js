@@ -622,7 +622,7 @@ if (showLoginBtn) showLoginBtn.addEventListener('click', (e) => { e.preventDefau
 if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = document.getElementById('loginEmail').value.trim();
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
         const password = document.getElementById('loginPassword').value.trim();
 
         if (USE_API) {
@@ -652,7 +652,7 @@ if (signupForm) {
     signupForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const name = document.getElementById('signupName').value.trim();
-        const email = document.getElementById('signupEmail').value.trim();
+        const email = document.getElementById('signupEmail').value.trim().toLowerCase();
         const password = document.getElementById('signupPassword').value.trim();
         if (USE_API) {
             fetch(`${API_BASE}/signup`, {
