@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narrow Fitness GYM - Transform Your Body, Transform Your Life</title>
+    <meta name="description"
+        content="Join Narrow Fitness GYM in Sri Lanka. Premium fitness facilities with expert trainers. Monthly membership at LKR 3,000 with LKR 1,000 admission fee.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">💪</span>
+                <span class="logo-text">NARROW FITNESS</span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#programs" class="nav-link">Programs</a></li>
+                <li><a href="#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="#bmi-calculator" class="nav-link">BMI Calculator</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <a href="#portal" class="cta-btn">Member Portal</a>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Image Slider -->
+    <section id="home" class="hero">
+        <div class="slider-container">
+            <div class="slide active">
+                <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1920&q=80" alt="Gym Training">
+                <div class="slide-overlay"></div>
+            </div>
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1920&q=80" alt="Fitness Class">
+                <div class="slide-overlay"></div>
+            </div>
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1920&q=80"
+                    alt="Cardio Training">
+                <div class="slide-overlay"></div>
+            </div>
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1920&q=80"
+                    alt="Strength Training">
+                <div class="slide-overlay"></div>
+            </div>
+
+            <button class="slider-btn prev" onclick="changeSlide(-1)">❮</button>
+            <button class="slider-btn next" onclick="changeSlide(1)">❯</button>
+
+            <div class="slider-dots">
+                <span class="dot active" onclick="currentSlide(0)"></span>
+                <span class="dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+            </div>
+        </div>
+
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="title-line">TRANSFORM YOUR</span>
+                <span class="title-line highlight">BODY & MIND</span>
+            </h1>
+            <p class="hero-subtitle">Join Sri Lanka's Premier Fitness Destination</p>
+            <div class="hero-buttons">
+                <a href="#pricing" class="btn btn-primary">Start Your Journey</a>
+                <a href="#programs" class="btn btn-secondary">Explore Programs</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">About Narrow Fitness GYM</h2>
+                <p class="section-subtitle">Your Fitness Journey Starts Here</p>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="card-icon">🏋️</div>
+                    <h3>Expert Trainers</h3>
+                    <p>Certified professionals dedicated to helping you achieve your fitness goals</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Modern Equipment</h3>
+                    <p>State-of-the-art facilities with the latest fitness technology</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">🎯</div>
+                    <h3>Personalized Plans</h3>
+                    <p>Customized workout programs tailored to your individual needs</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">🌟</div>
+                    <h3>Community Support</h3>
+                    <p>Join a motivating community of fitness enthusiasts</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Counter Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-number" data-target="500">0</div>
+                    <div class="stat-label">Active Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💪</div>
+                    <div class="stat-number" data-target="15">0</div>
+                    <div class="stat-label">Expert Trainers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-number" data-target="50">0</div>
+                    <div class="stat-label">Weekly Classes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-number" data-target="5">0</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">What Our Members Say</h2>
+                <p class="section-subtitle">Real Results, Real People</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Narrow Fitness changed my life! The trainers are amazing and the
+                        community is so supportive. I've lost 15kg in 3 months!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">S</div>
+                        <div class="author-info">
+                            <h4>Saman Perera</h4>
+                            <p>Colombo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Best gym in Sri Lanka! Modern equipment, clean facilities, and the
+                        group classes are so much fun. Highly recommend!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">N</div>
+                        <div class="author-info">
+                            <h4>Nimal Silva</h4>
+                            <p>Kandy</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"The personalized training programs really work! I've gained muscle and
+                        confidence. The monthly fee is so affordable too!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">R</div>
+                        <div class="author-info">
+                            <h4>Ruwan Fernando</h4>
+                            <p>Galle</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Programs Section -->
+    <section id="programs" class="programs">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Programs</h2>
+                <p class="section-subtitle">Choose What Fits Your Goals</p>
+            </div>
+
+            <div class="programs-grid">
+                <div class="program-card">
+                    <div class="program-image">
+                        <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80"
+                            alt="Strength Training">
+                        <div class="program-overlay">
+                            <span class="program-badge">Popular</span>
+                        </div>
+                    </div>
+                    <div class="program-content">
+                        <h3>Strength Training</h3>
+                        <p>Build muscle and increase power with our comprehensive strength programs</p>
+                        <ul class="program-features">
+                            <li>✓ Free weights & machines</li>
+                            <li>✓ Expert guidance</li>
+                            <li>✓ Progressive overload</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="program-card">
+                    <div class="program-image">
+                        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80"
+                            alt="Cardio Fitness">
+                        <div class="program-overlay">
+                            <span class="program-badge">Trending</span>
+                        </div>
+                    </div>
+                    <div class="program-content">
+                        <h3>Cardio Fitness</h3>
+                        <p>Improve endurance and burn calories with dynamic cardio workouts</p>
+                        <ul class="program-features">
+                            <li>✓ Treadmills & bikes</li>
+                            <li>✓ HIIT sessions</li>
+                            <li>✓ Heart rate monitoring</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="program-card">
+                    <div class="program-image">
+                        <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80"
+                            alt="Yoga & Flexibility">
+                        <div class="program-overlay">
+                            <span class="program-badge">New</span>
+                        </div>
+                    </div>
+                    <div class="program-content">
+                        <h3>Yoga & Flexibility</h3>
+                        <p>Enhance flexibility and find inner peace with guided yoga sessions</p>
+                        <ul class="program-features">
+                            <li>✓ Multiple yoga styles</li>
+                            <li>✓ Meditation classes</li>
+                            <li>✓ Stress relief</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Membership Pricing</h2>
+                <p class="section-subtitle">Affordable Fitness for Everyone</p>
+            </div>
+
+            <div class="pricing-card-wrapper">
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Best Value</div>
+                    <div class="pricing-header">
+                        <h3>Monthly Membership</h3>
+                        <p class="pricing-description">Full access to all facilities and programs</p>
+                    </div>
+                    <div class="pricing-amount">
+                        <span class="currency">LKR</span>
+                        <span class="price">3,000</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <div class="pricing-features">
+                        <h4>What's Included:</h4>
+                        <ul>
+                            <li><span class="check">✓</span> Unlimited gym access</li>
+                            <li><span class="check">✓</span> All equipment & facilities</li>
+                            <li><span class="check">✓</span> Group fitness classes</li>
+                            <li><span class="check">✓</span> Personal training consultation</li>
+                            <li><span class="check">✓</span> Locker & shower facilities</li>
+                            <li><span class="check">✓</span> Nutrition guidance</li>
+                            <li><span class="check">✓</span> Progress tracking</li>
+                            <li><span class="check">✓</span> Community support</li>
+                        </ul>
+                    </div>
+                    <div class="admission-fee">
+                        <p>One-time admission fee: <strong>LKR 1,000</strong></p>
+                    </div>
+                    <button class="btn btn-primary btn-large">Join Narrow Fitness</button>
+                </div>
+            </div>
+
+            <div class="pricing-note">
+                <p>💳 Flexible payment options available | 📞 Contact us for corporate packages</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BMI Calculator Section -->
+    <section id="bmi-calculator" class="bmi-calculator">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">BMI Calculator</h2>
+                <p class="section-subtitle">Check Your Body Mass Index</p>
+            </div>
+
+            <div class="bmi-container">
+                <div class="bmi-info">
+                    <!-- Default Info (Visible initially) -->
+                    <div id="bmiDefaultInfo">
+                        <h3>What is BMI?</h3>
+                        <p>Body Mass Index (BMI) is a measure of body fat based on height and weight. It's a useful
+                            indicator of whether you're at a healthy weight.</p>
+
+                        <div class="bmi-categories">
+                            <h4>BMI Categories:</h4>
+                            <div class="category-item">
+                                <span class="category-dot underweight"></span>
+                                <span class="category-label">Underweight: &lt; 18.5</span>
+                            </div>
+                            <div class="category-item">
+                                <span class="category-dot normal"></span>
+                                <span class="category-label">Normal: 18.5 - 24.9</span>
+                            </div>
+                            <div class="category-item">
+                                <span class="category-dot overweight"></span>
+                                <span class="category-label">Overweight: 25 - 29.9</span>
+                            </div>
+                            <div class="category-item">
+                                <span class="category-dot obese"></span>
+                                <span class="category-label">Obese: ≥ 30</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Result Card (Hidden initially, appears from left) -->
+                    <div id="bmiResultCard" class="bmi-result-card" style="display: none;">
+                        <h3 class="result-title">Your Results</h3>
+                        <div class="result-header">
+                            <div class="score-circle">
+                                <span class="result-score" id="bmiScore">0.0</span>
+                                <span class="score-label">BMI</span>
+                            </div>
+                            <div class="status-badge" id="bmiStatusBadge">
+                                <span id="bmiStatus">Status</span>
+                            </div>
+                        </div>
+
+                        <div class="result-details">
+                            <div class="detail-box goal">
+                                <h4>🎯 Your Goal</h4>
+                                <p id="bmiGoalText">Calculating...</p>
+                            </div>
+
+                            <div class="detail-box motivation">
+                                <h4>💪 Motivation</h4>
+                                <p id="bmiMotivationText">Stay strong!</p>
+                            </div>
+                        </div>
+
+                        <button id="recalculateBtn" class="btn-text">← Calculate Again</button>
+                    </div>
+                </div>
+
+                <div class="bmi-calculator-form">
+                    <h3>Calculate Your BMI</h3>
+                    <form id="bmiForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="weight">Weight (kg)</label>
+                                <input type="number" id="weight" placeholder="Weight" min="1" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Height</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="number" id="feet" placeholder="Feet" min="1" step="1" required>
+                                    <input type="number" id="inches" placeholder="Inches" min="0" max="11" step="1"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-large">Calculate BMI</button>
+                    </form>
+
+                    <p class="form-note">Enter your details to see your personal plan on the left.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Member Portal Section (Login/Signup + Dashboard) -->
+    <section id="portal" class="progress-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Member Portal</h2>
+                <p class="section-subtitle">Track Your Journey & Visualize Gains</p>
+            </div>
+
+            <!-- Auth Container (Visible when logged out) -->
+            <div id="auth-container" class="auth-container">
+                <div class="auth-card">
+                    <!-- Login Form -->
+                    <div id="login-form-box">
+                        <h3>Welcome Back 👋</h3>
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="loginEmail" required placeholder="your@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="loginPassword" required placeholder="••••••••">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+                            <p class="auth-switch">New member? <a href="#" id="showSignup">Create Account</a></p>
+                        </form>
+                    </div>
+
+                    <!-- Signup Form (Hidden) -->
+                    <div id="signup-form-box" style="display: none;">
+                        <h3>Join the Transformation 🚀</h3>
+                        <form id="signupForm">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="signupName" required placeholder="John Doe">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="signupEmail" required placeholder="your@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="signupPassword" required placeholder="Create a password">
+                            </div>
+                            <button type="submit" class="btn btn-secondary" style="width: 100%;">Sign Up</button>
+                            <p class="auth-switch">Already have an account? <a href="#" id="showLogin">Sign In</a></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard (Hidden until logged in) -->
+            <div id="user-dashboard" class="dashboard-grid" style="display: none;">
+                <!-- Header & Quick Stats -->
+                <div class="dashboard-header-container" style="grid-column: 1 / -1; margin-bottom: 20px;">
+                    <div class="header-top">
+                        <h3 id="welcomeMsg" style="color: var(--text-light);">Welcome, User</h3>
+                        <button id="logoutBtn" class="btn-sm btn-danger-soft">Logout ↪️</button>
+                    </div>
+                    <div class="dashboard-stats-bar">
+                        <div class="mini-stat">🔥 Streak: <strong id="streakCount">0 Days</strong></div>
+                        <div class="mini-stat">🏆 Badges: <strong id="badgeCount">0/6</strong></div>
+                        <div class="mini-stat">📅 Today: <strong id="currentDayDisplay">Monday</strong></div>
+                    </div>
+                </div>
+
+                <!-- Row 1: Tracker Input & Chart -->
+                <div class="tracker-input-card">
+                    <h3>📝 Log Workout</h3>
+                    <form id="trackerForm">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="trackerDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Metric</label>
+                            <select id="trackerType">
+                                <option value="weight">Body Weight (kg)</option>
+                                <option value="bench">Bench Press (kg)</option>
+                                <option value="squat">Squat (kg)</option>
+                                <option value="deadlift">Deadlift (kg)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Value (kg)</label>
+                            <input type="number" id="trackerValue" placeholder="e.g. 70.5" step="0.1" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Add Entry 📈</button>
+                    </form>
+
+                    <div class="tracker-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button id="exportBtn" class="btn-secondary"
+                            style="flex: 1; padding: 10px; font-size: 14px;">Download Report �</button>
+                        <button id="clearDataBtn" class="btn-clear"
+                            style="flex: 1; margin: 0; border: 1px solid #ef4444; border-radius: 8px;">Clear History
+                            🗑️</button>
+                    </div>
+                </div>
+
+                <div class="tracker-chart-card">
+                    <canvas id="progressChart"></canvas>
+                </div>
+
+                <!-- Row 2: Daily Plan & Badges -->
+                <div class="dashboard-card daily-plan-card">
+                    <h3>📅 Today's Smart Plan</h3>
+                    <div id="dailyPlanContent" class="plan-content">
+                        <!-- JS Injected -->
+                        <p>Loading plan...</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card attendance-card">
+                    <h3>📍 Gym Attendance</h3>
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <button id="checkInBtn" class="btn-primary"
+                            style="width: 100%; padding: 15px; border-radius: 12px; font-size: 16px;">Check In Now
+                            📍</button>
+                        <p id="checkInStatus" style="margin-top: 10px; font-size: 14px; color: var(--text-gray);">Not
+                            checked in today.</p>
+                    </div>
+                    <div class="attendance-history">
+                        <h4
+                            style="font-size: 14px; color: var(--text-light); margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;">
+                            Recent Visits</h4>
+                        <ul id="visitList"
+                            style="list-style: none; font-size: 13px; color: var(--text-gray); max-height: 100px; overflow-y: auto;">
+                            <!-- Injected via JS -->
+                        </ul>
+                        <button id="downloadAttendanceBtn" class="btn-sm btn-primary-soft"
+                            style="width: auto; margin-top: 10px;">Download History 📄</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-card pr-card">
+                    <h3>🥇 Personal Records</h3>
+                    <div class="pr-list" style="display: flex; flex-direction: column; gap: 15px;">
+                        <div class="pr-item"
+                            style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                            <span class="pr-label" style="color: var(--text-gray);">Bench Press</span>
+                            <span class="pr-value" id="prBench"
+                                style="color: #4ecca3; font-weight: bold; font-size: 1.2rem;">-- kg</span>
+                        </div>
+                        <div class="pr-item"
+                            style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                            <span class="pr-label" style="color: var(--text-gray);">Squat</span>
+                            <span class="pr-value" id="prSquat"
+                                style="color: #ffd23f; font-weight: bold; font-size: 1.2rem;">-- kg</span>
+                        </div>
+                        <div class="pr-item"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="pr-label" style="color: var(--text-gray);">Deadlift</span>
+                            <span class="pr-value" id="prDeadlift"
+                                style="color: #ff6b35; font-weight: bold; font-size: 1.2rem;">-- kg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card badges-card">
+                    <h3>🏆 Your Trophy Case</h3>
+                    <div class="badges-grid" id="badgesGrid">
+                        <!-- JS Injected -->
+                    </div>
+                </div>
+
+                <!-- Row 3: Class Schedule -->
+                <div class="dashboard-card schedule-card" style="grid-column: 1 / -1;">
+                    <h3>🗓️ Class Schedule & Booking</h3>
+                    <div class="schedule-tabs" id="scheduleTabs">
+                        <button class="tab-btn active" data-day="Mon">Mon</button>
+                        <button class="tab-btn" data-day="Tue">Tue</button>
+                        <button class="tab-btn" data-day="Wed">Wed</button>
+                        <button class="tab-btn" data-day="Thu">Thu</button>
+                        <button class="tab-btn" data-day="Fri">Fri</button>
+                        <button class="tab-btn" data-day="Sat">Sat</button>
+                        <button class="tab-btn" data-day="Sun">Sun</button>
+                    </div>
+                    <div id="scheduleList" class="schedule-list">
+                        <!-- JS Injected -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Gallery Section -->
+    <section class="gallery">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Facilities</h2>
+                <p class="section-subtitle">State-of-the-Art Gym Equipment & Spaces</p>
+            </div>
+
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=80"
+                        alt="Gym Equipment">
+                    <div class="gallery-overlay">
+                        <h3>Weight Training Area</h3>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&q=80"
+                        alt="Cardio Zone">
+                    <div class="gallery-overlay">
+                        <h3>Cardio Zone</h3>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=80"
+                        alt="Group Classes">
+                    <div class="gallery-overlay">
+                        <h3>Group Classes</h3>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=600&q=80"
+                        alt="Personal Training">
+                    <div class="gallery-overlay">
+                        <h3>Personal Training</h3>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80"
+                        alt="Free Weights">
+                    <div class="gallery-overlay">
+                        <h3>Free Weights Section</h3>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80" alt="Yoga Studio">
+                    <div class="gallery-overlay">
+                        <h3>Yoga & Flexibility</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Get In Touch</h2>
+                <p class="section-subtitle">Ready to Start Your Fitness Journey?</p>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>Visit Us</h3>
+                    <div class="info-item">
+                        <div class="info-icon">📍</div>
+                        <div>
+                            <h4>Location</h4>
+                            <p>Narrow Fitness GYM<br>Colombo, Sri Lanka</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">📞</div>
+                        <div>
+                            <h4>Phone</h4>
+                            <p>+94 XX XXX XXXX</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">✉️</div>
+                        <div>
+                            <h4>Email</h4>
+                            <p>info@narrowfitness.lk</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">⏰</div>
+                        <div>
+                            <h4>Opening Hours</h4>
+                            <p>Monday - Saturday: 5:00 AM - 10:00 PM<br>Sunday: 6:00 AM - 8:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" placeholder="Phone Number" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea placeholder="Your Message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-large">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Action Buttons -->
+    <a href="https://wa.me/94XXXXXXXXX" class="whatsapp-float" target="_blank" title="Chat on WhatsApp">
+        <svg class="whatsapp-icon" viewBox="0 0 32 32" fill="white">
+            <path
+                d="M16 0C7.164 0 0 7.163 0 16c0 2.825.736 5.478 2.022 7.773L.096 30.906l7.428-1.948A15.93 15.93 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.455c-2.516 0-4.89-.69-6.915-1.888l-.496-.295-5.15 1.35 1.374-5.021-.324-.514A13.413 13.413 0 012.545 16c0-7.424 6.031-13.455 13.455-13.455S29.455 8.576 29.455 16 23.424 29.455 16 29.455zm7.379-10.059c-.405-.202-2.395-1.182-2.767-1.317-.371-.135-.642-.202-.912.202-.27.405-1.047 1.317-1.283 1.588-.236.27-.472.304-.877.101-.405-.202-1.71-.63-3.257-2.009-1.204-1.073-2.017-2.398-2.253-2.803-.236-.405-.025-.624.177-.826.182-.182.405-.472.607-.708.202-.236.27-.405.405-.675.135-.27.067-.506-.034-.708-.101-.202-.912-2.198-1.25-3.008-.329-.789-.663-.682-.912-.695-.236-.012-.506-.015-.776-.015s-.708.101-1.079.506c-.371.405-1.418 1.385-1.418 3.381s1.452 3.921 1.654 4.191c.202.27 2.852 4.354 6.91 6.104.965.417 1.719.666 2.307.852.969.308 1.851.264 2.548.16.777-.116 2.395-.98 2.733-1.925.338-.945.338-1.755.236-1.925-.101-.169-.371-.27-.776-.472z" />
+        </svg>
+    </a>
+
+    <button class="scroll-top" id="scrollTop" title="Back to Top">
+        <span>↑</span>
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>NARROW FITNESS GYM</h3>
+                    <p>Transform your body, transform your life. Join Sri Lanka's premier fitness destination.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#programs">Programs</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link" title="Facebook">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" title="Instagram">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" title="YouTube">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Narrow Fitness GYM. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

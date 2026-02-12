@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Pricing Section Visibility</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .test-section {
+            background: #16213e;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 2px solid #7c3aed;
+        }
+
+        h1 {
+            color: #7c3aed;
+        }
+
+        h2 {
+            color: #a78bfa;
+        }
+
+        .success {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .info {
+            color: #cbd5e1;
+        }
+
+        code {
+            background: #0f3460;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #a78bfa;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>✅ Pricing Section Fix Applied</h1>
+
+    <div class="test-section">
+        <h2>🔧 What Was Fixed:</h2>
+        <p class="info">The "Membership Pricing" section was disappearing because it was being hidden by the scroll
+            animation system.</p>
+    </div>
+
+    <div class="test-section">
+        <h2>✨ Changes Made:</h2>
+        <ul class="info">
+            <li><strong>CSS Update:</strong> Added rules to ensure <code>.pricing-card</code> always stays visible with
+                <code>opacity: 1 !important</code></li>
+            <li><strong>JavaScript Update:</strong> Removed <code>.pricing-card</code> from the scroll animation
+                observer</li>
+            <li><strong>Result:</strong> The pricing section will now always be visible and won't disappear</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 What Still Animates:</h2>
+        <ul class="info">
+            <li>✓ About section cards - fade up</li>
+            <li>✓ Program cards - scale in</li>
+            <li>✓ Contact info - fade from left</li>
+            <li>✓ Contact form - fade from right</li>
+            <li>✓ Section headers - reveal with blur</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 How to Test:</h2>
+        <ol class="info">
+            <li>Open <code>index.html</code> in your browser</li>
+            <li>Scroll down to the "Membership Pricing" section</li>
+            <li>The pricing card should now be <span class="success">ALWAYS VISIBLE</span></li>
+            <li>Refresh the page multiple times - pricing should never disappear</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <p class="success">✅ The pricing section visibility issue has been fixed!</p>
+        <p class="info">You can now safely scroll through your website without the pricing section disappearing.</p>
+    </div>
+</body>
+
+</html>
