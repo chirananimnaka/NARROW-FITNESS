@@ -1005,76 +1005,92 @@ document.addEventListener('DOMContentLoaded', () => {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // --- Custom Creative Design ---
+            // --- Custom Premium Blue Design ---
 
-            // Background Header
-            doc.setFillColor(26, 26, 46); // Dark blue background
+            // 1. Elegant Header with Gradient-like effect (Layered Rectangles)
+            doc.setFillColor(30, 58, 138); // Deep Blue
             doc.rect(0, 0, 210, 40, 'F');
 
+            doc.setFillColor(37, 99, 235); // Brighter Blue Accent
+            doc.rect(0, 38, 210, 2, 'F'); // Bottom border of header
+
             // Title
-            doc.setFontSize(26);
+            doc.setFontSize(24);
             doc.setTextColor(255, 255, 255);
             doc.font = "helvetica";
             doc.setFont("helvetica", "bold");
             doc.text("NARROW FITNESS", 105, 20, { align: 'center' });
 
-            doc.setFontSize(14);
-            doc.setTextColor(167, 139, 250); // Light purple
-            doc.text("ATTENDANCE & WEIGHT REPORT", 105, 30, { align: 'center' });
+            doc.setFontSize(12);
+            doc.setTextColor(191, 219, 254); // Light Blue Text
+            doc.text("OFFICIAL ATTENDANCE & WEIGHT REPORT", 105, 30, { align: 'center', charSpace: 1.5 });
 
-            // User Info
-            doc.setFontSize(10);
-            doc.setTextColor(100);
-            doc.text(`Athlete: ${currentUserEmail}`, 14, 50);
-            doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 14, 55);
+            // User Info Section & Quote
+            doc.setDrawColor(200, 200, 200);
+            doc.line(14, 58, 196, 58); // Separator line
 
-            // Motivational Quote
             doc.setFontSize(10);
-            doc.setTextColor(124, 58, 237);
+            doc.setTextColor(60, 60, 60);
+            doc.setFont("helvetica", "bold");
+            doc.text("ATHLETE PROFILE", 14, 48);
+
+            doc.setFont("helvetica", "normal");
+            doc.text(`Name: ${currentUserEmail.split('@')[0]}`, 14, 54);
+            doc.text(`Email: ${currentUserEmail}`, 14, 60); // Adjusted Y
+            doc.text(`Generated: ${new Date().toLocaleDateString()} @ ${new Date().toLocaleTimeString()}`, 14, 66);
+
+            // Motivational Quote (Right aligned)
+            doc.setFontSize(10);
+            doc.setTextColor(37, 99, 235); // Blue
             doc.setFont("helvetica", "italic");
-            doc.text('"Consistency is the key to breakthrough."', 196, 50, { align: 'right' });
+            doc.text('"Success starts with self-discipline."', 196, 54, { align: 'right' });
 
             // Table
             doc.autoTable({
-                head: [['Date', 'Gym Attendance', 'Body Weight']],
+                head: [['Date', 'Gym Attendance', 'Body Weight (kg)']],
                 body: tableData,
-                startY: 65,
+                startY: 75,
                 theme: 'grid',
                 styles: {
                     font: "helvetica",
                     fontSize: 10,
-                    cellPadding: 5,
-                    textColor: [40, 40, 40]
+                    cellPadding: 8, // More padding for cleaner look
+                    textColor: [50, 50, 50],
+                    lineColor: [230, 230, 230],
+                    lineWidth: 0.1
                 },
                 headStyles: {
-                    fillColor: [16, 185, 129], // Green
+                    fillColor: [30, 58, 138], // Deep Blue Header
                     textColor: [255, 255, 255],
                     fontStyle: 'bold',
-                    halign: 'center'
+                    halign: 'center',
+                    valign: 'middle'
                 },
                 columnStyles: {
-                    0: { halign: 'left' },
-                    1: { halign: 'center', fontStyle: 'bold' },
+                    0: { halign: 'left', fontStyle: 'bold' },
+                    1: { halign: 'center' },
                     2: { halign: 'center' }
                 },
                 didParseCell: function (data) {
-                    // Custom styling for specific cells
                     if (data.section === 'body') {
-                        if (data.column.index === 1) { // Attendance Column
+                        if (data.column.index === 1) { // Attendance
                             if (data.cell.raw === 'YES') {
-                                data.cell.styles.textColor = [16, 185, 129]; // Green
+                                data.cell.styles.textColor = [37, 99, 235]; // Blue text for YES
+                                data.cell.styles.fontStyle = 'bold';
                             } else {
-                                data.cell.styles.textColor = [200, 200, 200]; // Light Gray
+                                data.cell.styles.textColor = [200, 200, 200]; // Gray for missed
                             }
                         }
-                        if (data.column.index === 2) { // Weight Column
-                            // Highlight if weight changed? (Complex to track in this hook)
-                            // Just ensure it looks clean
+                        if (data.column.index === 2) { // Weight
+                            if (data.cell.raw !== '-') {
+                                data.cell.styles.textColor = [15, 23, 42]; // Dark slate for weight
+                                data.cell.styles.fontStyle = 'bold';
+                            }
                         }
                     }
                 },
                 alternateRowStyles: {
-                    fillColor: [240, 253, 244] // Very light green
+                    fillColor: [239, 246, 255] // Very light blue background for alternate rows
                 }
             });
 
@@ -1082,9 +1098,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const pageCount = doc.internal.getNumberOfPages();
             for (let i = 1; i <= pageCount; i++) {
                 doc.setPage(i);
+
+                // Footer Line
+                doc.setDrawColor(37, 99, 235); // Blue line
+                doc.setLineWidth(0.5);
+                doc.line(14, 285, 196, 285);
+
                 doc.setFontSize(8);
-                doc.setTextColor(150);
-                doc.text('Generated by Narrow Fitness Portal', 105, 290, { align: 'center' });
+                doc.setTextColor(100);
+                doc.text('Narrow Fitness - Your Transformation Partner', 14, 290);
+                doc.text(`Page ${i} of ${pageCount}`, 196, 290, { align: 'right' });
             }
 
             doc.save('NarrowFitness_Full_Report.pdf');

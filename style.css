@@ -1807,16 +1807,15 @@ body {
 
     .cta-btn {
         display: inline-block;
-        padding: 8px 16px;
-        /* Smaller, standard mobile size */
-        font-size: 14px;
-        /* More compact text */
-        font-weight: 500;
-        margin-right: 45px;
-        /* Increase margin to clear hamburger menu */
-        border-radius: 6px;
+        padding: 5px 12px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-right: 55px;
+        /* Clear hamburger with extra space */
+        border-radius: 4px;
         box-shadow: none;
-        /* Remove shadow to reduce visual weight */
+        letter-spacing: 0.5px;
     }
 
     .hero-title {
