@@ -745,80 +745,245 @@ if (downloadAttendanceBtn) {
     });
 }
 
-// 4. Clear History Logic
-if (clearDataBtn) {
-    clearDataBtn.addEventListener('click', async () => {
-        if (!currentUserEmail) return;
-        if (!confirm("Are you sure you want to clear ALL your tracking history? This cannot be undone.")) return;
+// Ensure DOM is fully loaded before attaching complex event listeners
+document.addEventListener('DOMContentLoaded', () => {
 
-        progressData = [];
+    // 4. Clear History Logic
+    const clearBtn = document.getElementById('clearDataBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', async () => {
+            if (!currentUserEmail) {
+                alert("Please log in to perform this action.");
+                return;
+            }
+            if (!confirm("Are you sure you want to clear ALL your tracking history? This cannot be undone.")) return;
 
-        try {
-            // Update via API - we send empty array
-            const response = await fetch(`${API_URL}/data`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: currentUserEmail,
-                    type: 'progress',
-                    data: []
-                })
+            // Optimistic UI update
+            const originalData = [...progressData];
+            progressData = [];
+
+            try {
+                // Update via API - we send empty array
+                const response = await fetch(`${API_URL}/data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentUserEmail,
+                        type: 'progress',
+                        data: []
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to clear data');
+
+                updateDashboardUI();
+                updateChart();
+                alert("History Cleared! 🗑️");
+            } catch (e) {
+                console.error("Error clearing data:", e);
+                progressData = originalData; // Revert
+                alert("Error clearing data: " + e.message);
+                updateDashboardUI();
+            }
+        });
+    } else {
+        console.error("Clear Data Button not found in DOM");
+    }
+
+    // 5. Add Past Attendance Logic
+    const addPastBtn = document.getElementById('addPastAttendanceBtn');
+    const pastDateInput = document.getElementById('pastAttendanceDate');
+
+    if (addPastBtn && pastDateInput) {
+        addPastBtn.addEventListener('click', async () => {
+            if (!currentUserEmail) {
+                alert("Please log in first.");
+                return;
+            }
+
+            const dateVal = pastDateInput.value;
+            if (!dateVal) {
+                alert("Please select a date first.");
+                return;
+            }
+
+            if (attendanceData.includes(dateVal)) {
+                alert("Attendance already recorded for this date.");
+                return;
+            }
+
+            // Store original for revert
+            const originalAttendance = [...attendanceData];
+
+            attendanceData.push(dateVal);
+            // Sort to keep history chronological
+            attendanceData.sort((a, b) => new Date(a) - new Date(b));
+
+            try {
+                const response = await fetch(`${API_URL}/data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentUserEmail,
+                        type: 'attendance',
+                        data: attendanceData
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to add past attendance');
+
+                updateDashboardUI();
+                // Explicitly re-render list if it exists
+                if (typeof renderVisitList === 'function') {
+                    renderVisitList();
+                }
+                alert(`Attendance added for ${dateVal}! ✅`);
+                pastDateInput.value = ''; // Reset input
+            } catch (e) {
+                console.error("Error adding past attendance:", e);
+                attendanceData = originalAttendance; // Revert
+                alert("Error adding attendance: " + e.message);
+                updateDashboardUI();
+            }
+        });
+        // 6. Creative PDF Logic
+        const creativePdfBtn = document.getElementById('creativePdfBtn');
+
+        if (creativePdfBtn) {
+            creativePdfBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!currentUserEmail) {
+                    alert("Please log in first.");
+                    return;
+                }
+                if (!window.jspdf) {
+                    alert('PDF Library not loaded');
+                    return;
+                }
+
+                // 1. Prepare Data
+                const weightEntries = progressData.filter(p => p.type === 'weight');
+                const attendanceSet = new Set(attendanceData); // unique dates
+
+                // Collect all unique dates from both sources
+                const allDatesSet = new Set([
+                    ...attendanceData,
+                    ...weightEntries.map(e => e.date)
+                ]);
+
+                // Sort dates
+                const sortedDates = Array.from(allDatesSet).sort((a, b) => new Date(a) - new Date(b));
+
+                // Logic to fill forward weight
+                let lastKnownWeight = 'N/A';
+                const tableData = [];
+
+                sortedDates.forEach(date => {
+                    // Check if we have a weight update for this specific date
+                    // There might be multiple updates on one day, take the last one or average? Let's take last.
+                    const daysWeightEntries = weightEntries.filter(e => e.date === date);
+                    if (daysWeightEntries.length > 0) {
+                        // Start of day to end of day logic? Arrays are just simplified. 
+                        // progressData is pushed, so last one is latest.
+                        lastKnownWeight = daysWeightEntries[daysWeightEntries.length - 1].value;
+                    }
+
+                    const attended = attendanceSet.has(date);
+
+                    tableData.push([
+                        new Date(date).toLocaleDateString(),
+                        attended ? 'YES' : '-',
+                        lastKnownWeight !== 'N/A' ? `${lastKnownWeight} kg` : '-'
+                    ]);
+                });
+
+                // 2. Generate PDF using jsPDF
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // --- Custom Creative Design ---
+
+                // Background Header
+                doc.setFillColor(26, 26, 46); // Dark blue background
+                doc.rect(0, 0, 210, 40, 'F');
+
+                // Title
+                doc.setFontSize(26);
+                doc.setTextColor(255, 255, 255);
+                doc.font = "helvetica";
+                doc.setFont("helvetica", "bold");
+                doc.text("NARROW FITNESS", 105, 20, { align: 'center' });
+
+                doc.setFontSize(14);
+                doc.setTextColor(167, 139, 250); // Light purple
+                doc.text("ATTENDANCE & WEIGHT REPORT", 105, 30, { align: 'center' });
+
+                // User Info
+                doc.setFontSize(10);
+                doc.setTextColor(100);
+                doc.text(`Athlete: ${currentUserEmail}`, 14, 50);
+                doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 14, 55);
+
+                // Motivational Quote
+                doc.setFontSize(10);
+                doc.setTextColor(124, 58, 237);
+                doc.setFont("helvetica", "italic");
+                doc.text('"Consistency is the key to breakthrough."', 196, 50, { align: 'right' });
+
+                // Table
+                doc.autoTable({
+                    head: [['Date', 'Gym Attendance', 'Body Weight']],
+                    body: tableData,
+                    startY: 65,
+                    theme: 'grid',
+                    styles: {
+                        font: "helvetica",
+                        fontSize: 10,
+                        cellPadding: 5,
+                        textColor: [40, 40, 40]
+                    },
+                    headStyles: {
+                        fillColor: [16, 185, 129], // Green
+                        textColor: [255, 255, 255],
+                        fontStyle: 'bold',
+                        halign: 'center'
+                    },
+                    columnStyles: {
+                        0: { halign: 'left' },
+                        1: { halign: 'center', fontStyle: 'bold' },
+                        2: { halign: 'center' }
+                    },
+                    didParseCell: function (data) {
+                        // Custom styling for specific cells
+                        if (data.section === 'body') {
+                            if (data.column.index === 1) { // Attendance Column
+                                if (data.cell.raw === 'YES') {
+                                    data.cell.styles.textColor = [16, 185, 129]; // Green
+                                } else {
+                                    data.cell.styles.textColor = [200, 200, 200]; // Light Gray
+                                }
+                            }
+                            if (data.column.index === 2) { // Weight Column
+                                // Highlight if weight changed? (Complex to track in this hook)
+                                // Just ensure it looks clean
+                            }
+                        }
+                    },
+                    alternateRowStyles: {
+                        fillColor: [240, 253, 244] // Very light green
+                    }
+                });
+
+                // Footer
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(150);
+                    doc.text('Generated by Narrow Fitness Portal', 105, 290, { align: 'center' });
+                }
+
+                doc.save('NarrowFitness_Full_Report.pdf');
             });
-
-            if (!response.ok) throw new Error('Failed to clear data');
-
-            updateDashboardUI();
-            updateChart();
-            alert("History Cleared! 🗑️");
-        } catch (e) {
-            console.error("Error clearing data:", e);
-            alert("Error clearing data: " + e.message);
         }
     });
-}
-
-// 5. Add Past Attendance Logic
-const addPastAttendanceBtn = document.getElementById('addPastAttendanceBtn');
-const pastAttendanceDate = document.getElementById('pastAttendanceDate');
-
-if (addPastAttendanceBtn && pastAttendanceDate) {
-    addPastAttendanceBtn.addEventListener('click', async () => {
-        if (!currentUserEmail) return;
-
-        const dateVal = pastAttendanceDate.value;
-        if (!dateVal) {
-            alert("Please select a date first.");
-            return;
-        }
-
-        if (attendanceData.includes(dateVal)) {
-            alert("Attendance already recorded for this date.");
-            return;
-        }
-
-        attendanceData.push(dateVal);
-        // Sort specifically to keep check-ins ordered if needed, though streak logic handles it
-        attendanceData.sort((a, b) => new Date(a) - new Date(b));
-
-        try {
-            const response = await fetch(`${API_URL}/data`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: currentUserEmail,
-                    type: 'attendance',
-                    data: attendanceData
-                })
-            });
-
-            if (!response.ok) throw new Error('Failed to add past attendance');
-
-            updateDashboardUI();
-            alert(`Attendance added for ${dateVal}! ✅`);
-            pastAttendanceDate.value = ''; // Reset input
-        } catch (e) {
-            console.error("Error adding past attendance:", e);
-            attendanceData = attendanceData.filter(d => d !== dateVal); // Revert on error
-        }
-    });
-}
