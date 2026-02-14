@@ -1091,3 +1091,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// ===== STATS COUNTER ANIMATION =====
+const statNumbers = document.querySelectorAll('.stat-number');
+if (statNumbers.length > 0) {
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const target = parseInt(el.getAttribute('data-target'));
+                const duration = 2000;
+                const startTime = performance.now();
+
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeOut = 1 - Math.pow(1 - progress, 3); // Cubic ease out
+
+                    const current = Math.floor(easeOut * target);
+                    el.innerText = current + (progress === 1 ? '+' : '');
+
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    }
+                }
+
+                requestAnimationFrame(update);
+                observer.unobserve(el);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    statNumbers.forEach(el => observer.observe(el));
+}
