@@ -942,10 +942,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(`Attendance added for ${dateVal}! ✅`);
                 pastDateInput.value = ''; // Reset input
             } catch (e) {
-                console.error("Error adding past attendance:", e);
-                attendanceData = originalAttendance; // Revert
-                alert("Error adding attendance: " + e.message);
+                console.warn("API Add Past Attendance failed, saving locally:", e);
+
+                // Save to LocalStorage
+                const localData = JSON.parse(localStorage.getItem(`narrowData_${currentUserEmail}`) || '{}');
+                localData.attendance = attendanceData;
+                localStorage.setItem(`narrowData_${currentUserEmail}`, JSON.stringify(localData));
+
                 updateDashboardUI();
+                if (typeof renderVisitList === 'function') renderVisitList();
+
+                alert(`Attendance added locally for ${dateVal}! (Offline) ✅`);
+                pastDateInput.value = '';
             }
         });
     }
