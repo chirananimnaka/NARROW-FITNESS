@@ -1807,19 +1807,16 @@ body {
 
     .cta-btn {
         display: inline-block;
-        /* Ensure it stays visible */
-        padding: 12px 24px;
-        /* Bigger touch target */
-        font-size: 16px;
-        /* Larger text */
-        font-weight: 600;
-        margin-right: 15px;
-        background-color: var(--primary);
-        /* Force primary color */
-        border-radius: 8px;
-        /* Softer edges */
-        box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
-        /* Subtle shadow */
+        padding: 8px 16px;
+        /* Smaller, standard mobile size */
+        font-size: 14px;
+        /* More compact text */
+        font-weight: 500;
+        margin-right: 45px;
+        /* Increase margin to clear hamburger menu */
+        border-radius: 6px;
+        box-shadow: none;
+        /* Remove shadow to reduce visual weight */
     }
 
     .hero-title {
