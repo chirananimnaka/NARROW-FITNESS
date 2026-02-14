@@ -744,3 +744,81 @@ if (downloadAttendanceBtn) {
         doc.save('NarrowFitness_Attendance.pdf');
     });
 }
+
+// 4. Clear History Logic
+if (clearDataBtn) {
+    clearDataBtn.addEventListener('click', async () => {
+        if (!currentUserEmail) return;
+        if (!confirm("Are you sure you want to clear ALL your tracking history? This cannot be undone.")) return;
+
+        progressData = [];
+
+        try {
+            // Update via API - we send empty array
+            const response = await fetch(`${API_URL}/data`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: currentUserEmail,
+                    type: 'progress',
+                    data: []
+                })
+            });
+
+            if (!response.ok) throw new Error('Failed to clear data');
+
+            updateDashboardUI();
+            updateChart();
+            alert("History Cleared! 🗑️");
+        } catch (e) {
+            console.error("Error clearing data:", e);
+            alert("Error clearing data: " + e.message);
+        }
+    });
+}
+
+// 5. Add Past Attendance Logic
+const addPastAttendanceBtn = document.getElementById('addPastAttendanceBtn');
+const pastAttendanceDate = document.getElementById('pastAttendanceDate');
+
+if (addPastAttendanceBtn && pastAttendanceDate) {
+    addPastAttendanceBtn.addEventListener('click', async () => {
+        if (!currentUserEmail) return;
+
+        const dateVal = pastAttendanceDate.value;
+        if (!dateVal) {
+            alert("Please select a date first.");
+            return;
+        }
+
+        if (attendanceData.includes(dateVal)) {
+            alert("Attendance already recorded for this date.");
+            return;
+        }
+
+        attendanceData.push(dateVal);
+        // Sort specifically to keep check-ins ordered if needed, though streak logic handles it
+        attendanceData.sort((a, b) => new Date(a) - new Date(b));
+
+        try {
+            const response = await fetch(`${API_URL}/data`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: currentUserEmail,
+                    type: 'attendance',
+                    data: attendanceData
+                })
+            });
+
+            if (!response.ok) throw new Error('Failed to add past attendance');
+
+            updateDashboardUI();
+            alert(`Attendance added for ${dateVal}! ✅`);
+            pastAttendanceDate.value = ''; // Reset input
+        } catch (e) {
+            console.error("Error adding past attendance:", e);
+            attendanceData = attendanceData.filter(d => d !== dateVal); // Revert on error
+        }
+    });
+}
