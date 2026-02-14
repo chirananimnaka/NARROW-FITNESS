@@ -790,6 +790,45 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Clear Data Button not found in DOM");
     }
 
+    // 4.5 Clear Attendance Logic (NEW)
+    const clearAttendanceBtn = document.getElementById('clearAttendanceBtn');
+    if (clearAttendanceBtn) {
+        clearAttendanceBtn.addEventListener('click', async () => {
+            if (!currentUserEmail) {
+                alert("Please log in first.");
+                return;
+            }
+            if (!confirm("Are you sure you want to clear ALL your ATTENDANCE history? This cannot be undone.")) return;
+
+            // Optimistic Update
+            const originalAttendance = [...attendanceData];
+            attendanceData = [];
+
+            try {
+                const response = await fetch(`${API_URL}/data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentUserEmail,
+                        type: 'attendance',
+                        data: []
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to clear attendance');
+
+                updateDashboardUI(); // This will clear the list and reset streak
+                renderVisitList();
+                alert("Attendance History Cleared! 🗑️");
+            } catch (e) {
+                console.error("Error clearing attendance:", e);
+                attendanceData = originalAttendance; // Revert
+                alert("Error clearing attendance: " + e.message);
+                updateDashboardUI();
+            }
+        });
+    }
+
     // 5. Add Past Attendance Logic
     const addPastBtn = document.getElementById('addPastAttendanceBtn');
     const pastDateInput = document.getElementById('pastAttendanceDate');

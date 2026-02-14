@@ -540,8 +540,13 @@
                             style="list-style: none; font-size: 13px; color: var(--text-gray); max-height: 100px; overflow-y: auto;">
                             <!-- Injected via JS -->
                         </ul>
-                        <button id="downloadAttendanceBtn" class="btn-sm btn-primary-soft"
-                            style="width: auto; margin-top: 10px;">Download History 📄</button>
+                        <div style="display: flex; gap: 5px; margin-top: 10px;">
+                            <button id="downloadAttendanceBtn" class="btn-sm btn-primary-soft" style="flex: 1;">Download
+                                History 📄</button>
+                            <button id="clearAttendanceBtn" class="btn-sm"
+                                style="flex: 1; border: 1px solid #ef4444; background: transparent; color: #ef4444; border-radius: 8px; cursor: pointer;">Clear
+                                History �️</button>
+                        </div>
                     </div>
                 </div>
 
