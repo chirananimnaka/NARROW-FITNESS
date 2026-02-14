@@ -115,8 +115,29 @@ if (loginForm) {
                 throw new Error(data.error || 'Login failed');
             }
         } catch (error) {
-            console.error("Login Error:", error);
-            alert("Login Failed: " + error.message);
+            console.warn("API Login failed, falling back to LocalStorage demo mode:", error);
+
+            // FALLBACK TO LOCAL STORAGE (For GitHub Pages / Mobile Demo)
+            const localUsers = JSON.parse(localStorage.getItem('narrowUsers') || '[]');
+            const user = localUsers.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                currentUserEmail = user.email;
+                localStorage.setItem('narrowUser', currentUserEmail);
+                showDashboard(currentUserEmail);
+                alert("Logged in (Demo Mode) ✅");
+            } else {
+                // If user doesn't exist locally, maybe they just want to try the app?
+                // Minimal fallback for "chirana.info@gmail.com" specifically as requested
+                if (email === 'chirana.info@gmail.com') {
+                    currentUserEmail = email;
+                    localStorage.setItem('narrowUser', currentUserEmail);
+                    showDashboard(currentUserEmail);
+                    alert("Welcome back, Chirana! (Offline Mode) 👋");
+                } else {
+                    alert("Login Failed: Server unreachable and user not found locally.");
+                }
+            }
         }
     });
 }
@@ -145,8 +166,20 @@ if (signupForm) {
                 throw new Error(data.error || 'Signup failed');
             }
         } catch (error) {
-            console.error("Signup Error:", error);
-            alert("Signup Failed: " + error.message);
+            console.warn("API Signup failed, falling back to LocalStorage:", error);
+
+            // Save to Local Storage
+            const localUsers = JSON.parse(localStorage.getItem('narrowUsers') || '[]');
+            if (localUsers.find(u => u.email === email)) {
+                alert("User already exists (Offline).");
+                return;
+            }
+
+            localUsers.push({ name, email, password });
+            localStorage.setItem('narrowUsers', JSON.stringify(localUsers));
+
+            alert("Account created! (Offline Mode) ✅");
+            toggleAuth('login');
         }
     });
 }
@@ -208,7 +241,21 @@ async function loadUserData(email) {
         else updateChart();
 
     } catch (error) {
-        console.error("Error loading user data", error);
+        console.warn("API Load failed, falling back to LocalStorage:", error);
+
+        // Fallback: Load from local storage if API fails
+        const localData = JSON.parse(localStorage.getItem(`narrowData_${email}`) || '{}');
+        progressData = localData.progress || [];
+        attendanceData = localData.attendance || [];
+        userBookings = localData.bookings || [];
+
+        // Set date input to today
+        if (trackerDate) trackerDate.valueAsDate = new Date();
+
+        welcomeMsg.textContent = `Welcome, Athlete (Offline) 👋`;
+        updateDashboardUI();
+        if (!chartInstance) initChart();
+        else updateChart();
     }
 }
 
@@ -245,8 +292,16 @@ if (trackerForm) {
             updateChart();
             alert("Entry Saved! 📈");
         } catch (e) {
-            console.error("Error saving entry:", e);
-            alert("Error saving data: " + e.message);
+            console.warn("API Save failed, saving locally:", e);
+
+            // Save to LocalStorage
+            const localData = JSON.parse(localStorage.getItem(`narrowData_${currentUserEmail}`) || '{}');
+            localData.progress = progressData;
+            localStorage.setItem(`narrowData_${currentUserEmail}`, JSON.stringify(localData));
+
+            updateDashboardUI();
+            updateChart();
+            alert("Entry Saved Locally! (Offline) 📈");
         }
     });
 }
@@ -278,7 +333,15 @@ if (checkInBtn) {
                 updateDashboardUI();
                 alert("Checked In! 💪");
             } catch (e) {
-                console.error("Error checking in:", e);
+                console.warn("API Check-in failed, saving locally:", e);
+
+                // Save to LocalStorage
+                const localData = JSON.parse(localStorage.getItem(`narrowData_${currentUserEmail}`) || '{}');
+                localData.attendance = attendanceData;
+                localStorage.setItem(`narrowData_${currentUserEmail}`, JSON.stringify(localData));
+
+                updateDashboardUI();
+                alert("Checked In Locally! (Offline) 💪");
             }
         } else {
             alert("You already checked in today!");
