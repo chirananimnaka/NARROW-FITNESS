@@ -1,28 +1,4 @@
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-// ===== FIREBASE CONFIGURATION =====
-const firebaseConfig = {
-    apiKey: "AIzaSyA3BJWAI7XjEQcK4WgO7IoVVE5Q9esMpXw",
-    authDomain: "narrow-fitness.firebaseapp.com",
-    projectId: "narrow-fitness",
-    storageBucket: "narrow-fitness.firebasestorage.app",
-    messagingSenderId: "265336849443",
-    appId: "1:265336849443:web:7cd4ea872c3a25f23f9d96",
-    measurementId: "G-FF9M3PZTJJ"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-console.log("Firebase Initialized");
-
 // ===== UI ELEMENTS =====
 const navbar = document.getElementById('navbar');
 const hamburger = document.getElementById('hamburger');
@@ -58,10 +34,12 @@ const scheduleTabs = document.getElementById('scheduleTabs');
 const scheduleList = document.getElementById('scheduleList');
 
 let chartInstance = null;
-let currentUser = null; // Holds the Firebase User object
+let currentUserEmail = null; // Changed from Firebase User object to simple email string
 let progressData = [];
 let userBookings = [];
 let attendanceData = [];
+
+const API_URL = 'http://localhost:3000/api';
 
 // ===== NAVIGATION & UI LOGIC =====
 
@@ -100,24 +78,20 @@ function toggleAuth(mode) {
     }
 }
 
-// ===== FIREBASE AUTHENTICATION LOGIC =====
+// ===== AUTHENTICATION LOGIC (LOCAL API) =====
 
-// 1. Listen for Auth State Changes (Login/Logout/Page Refresh)
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // User is signed in
-        console.log("User detected:", user.email);
-        currentUser = user;
-        showDashboard(user);
+// Check for existing session (simulate persistence)
+document.addEventListener('DOMContentLoaded', () => {
+    const savedUser = localStorage.getItem('narrowUser');
+    if (savedUser) {
+        currentUserEmail = savedUser;
+        showDashboard(savedUser);
     } else {
-        // User is signed out
-        console.log("No user signed in");
-        currentUser = null;
         showAuth();
     }
 });
 
-// 2. Login Function
+// Login Function
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -125,8 +99,21 @@ if (loginForm) {
         const password = document.getElementById('loginPassword').value.trim();
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            // onAuthStateChanged will handle the UI update
+            const response = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                currentUserEmail = data.user.email;
+                localStorage.setItem('narrowUser', currentUserEmail);
+                showDashboard(currentUserEmail);
+            } else {
+                throw new Error(data.error || 'Login failed');
+            }
         } catch (error) {
             console.error("Login Error:", error);
             alert("Login Failed: " + error.message);
@@ -134,7 +121,7 @@ if (loginForm) {
     });
 }
 
-// 3. Signup Function
+// Signup Function
 if (signupForm) {
     signupForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -143,21 +130,20 @@ if (signupForm) {
         const password = document.getElementById('signupPassword').value.trim();
 
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-
-            // Create user document in Firestore with initial data
-            await setDoc(doc(db, "users", user.uid), {
-                name: name,
-                email: email,
-                createdAt: new Date(),
-                progress: [],
-                attendance: [],
-                bookings: []
+            const response = await fetch(`${API_URL}/signup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
             });
 
-            alert("Account created successfully! Welcome to Narrow Fitness.");
-            // onAuthStateChanged will redirect
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Account created successfully! Please log in.");
+                toggleAuth('login');
+            } else {
+                throw new Error(data.error || 'Signup failed');
+            }
         } catch (error) {
             console.error("Signup Error:", error);
             alert("Signup Failed: " + error.message);
@@ -165,15 +151,12 @@ if (signupForm) {
     });
 }
 
-// 4. Logout Function
+// Logout Function
 if (logoutBtn) {
-    logoutBtn.addEventListener('click', async () => {
-        try {
-            await signOut(auth);
-            // onAuthStateChanged will handle the UI
-        } catch (error) {
-            console.error("Logout Error:", error);
-        }
+    logoutBtn.addEventListener('click', () => {
+        currentUserEmail = null;
+        localStorage.removeItem('narrowUser');
+        showAuth();
     });
 }
 
@@ -185,28 +168,36 @@ function showAuth() {
     toggleAuth('login');
 }
 
-async function showDashboard(user) {
+async function showDashboard(email) {
     authContainer.style.display = 'none';
     userDashboard.style.display = 'grid'; // Maintain grid layout
 
-    // Fetch Name
+    // Fetch User Data
     try {
-        await loadUserData(user.uid);
+        await loadUserData(email);
     } catch (e) {
         console.error("Error loading profile:", e);
     }
 }
 
-// Load Data from Firestore
-async function loadUserData(uid) {
-    const docRef = doc(db, "users", uid);
-    const docSnap = await getDoc(docRef);
+// Load Data from Local API
+async function loadUserData(email) {
+    try {
+        const response = await fetch(`${API_URL}/data/${email}`);
+        if (!response.ok) throw new Error('Failed to fetch data');
 
-    if (docSnap.exists()) {
-        const data = docSnap.data();
-        welcomeMsg.textContent = `Welcome, ${data.name || 'Athlete'} 👋`;
+        const data = await response.json();
+
+        // Use user email/name for welcome (API doesn't return name in /data/:email yet, so we default or need to update API)
+        // Ideally we'd store name in localStorage too or fetch it. For now, use 'Athlete' or email.
+        welcomeMsg.textContent = `Welcome, Athlete 👋`;
+
         progressData = data.progress || [];
-        attendanceData = data.attendance || [];
+        attendanceData = (data.attendance || []).map(d => {
+            // Handle both full ISO strings and simple dates safely
+            if (typeof d === 'string') return d.split('T')[0];
+            return new Date(d).toISOString().split('T')[0];
+        });
         userBookings = data.bookings || [];
 
         // Set date input to today
@@ -215,8 +206,9 @@ async function loadUserData(uid) {
         updateDashboardUI();
         if (!chartInstance) initChart();
         else updateChart();
-    } else {
-        console.log("No such document!");
+
+    } catch (error) {
+        console.error("Error loading user data", error);
     }
 }
 
@@ -224,9 +216,10 @@ async function loadUserData(uid) {
 if (trackerForm) {
     trackerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (!currentUser) return;
+        if (!currentUserEmail) return;
 
         const entry = {
+            id: Date.now(),
             date: trackerDate.value,
             type: document.getElementById('trackerType').value,
             value: parseFloat(trackerValue.value)
@@ -234,12 +227,20 @@ if (trackerForm) {
 
         progressData.push(entry);
 
-        // Update Firestore
+        // Update via API
         try {
-            const userRef = doc(db, "users", currentUser.uid);
-            await updateDoc(userRef, {
-                progress: progressData
+            const response = await fetch(`${API_URL}/data`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: currentUserEmail,
+                    type: 'progress',
+                    data: progressData
+                })
             });
+
+            if (!response.ok) throw new Error('Failed to save');
+
             updateDashboardUI();
             updateChart();
             alert("Entry Saved! 📈");
@@ -254,18 +255,26 @@ if (trackerForm) {
 const checkInBtn = document.getElementById('checkInBtn');
 if (checkInBtn) {
     checkInBtn.addEventListener('click', async () => {
-        if (!currentUser) return;
+        if (!currentUserEmail) return;
         const today = new Date().toISOString().split('T')[0];
 
         if (!attendanceData.includes(today)) {
             attendanceData.push(today);
 
-            // Save to Firestore
+            // Save via API
             try {
-                const userRef = doc(db, "users", currentUser.uid);
-                await updateDoc(userRef, {
-                    attendance: arrayUnion(today)
+                const response = await fetch(`${API_URL}/data`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentUserEmail,
+                        type: 'attendance',
+                        data: attendanceData
+                    })
                 });
+
+                if (!response.ok) throw new Error('Failed to check in');
+
                 updateDashboardUI();
                 alert("Checked In! 💪");
             } catch (e) {
@@ -277,7 +286,7 @@ if (checkInBtn) {
     });
 }
 
-// ===== DASHBOARD UI UPDATES =====
+// ===== DASHBOARD UI UPDATES (UNCHANGED) =====
 
 const dailyPlans = [
     { day: "Sunday", focus: "Rest & Active Recovery 🧘", tasks: ["Light Stretching (15m)", "Meal Prep for Week", "Walk 5k steps"] },
@@ -569,4 +578,169 @@ if (slides.length > 0) {
     autoSlide();
     document.querySelector('.slider-container').addEventListener('mouseenter', () => clearInterval(slideInterval));
     document.querySelector('.slider-container').addEventListener('mouseleave', autoSlide);
+}
+
+
+// ===== NEW FUNCTIONALITY: BMI & REPORTS =====
+
+// 1. BMI Calculator Logic
+const bmiForm = document.getElementById('bmiForm');
+if (bmiForm) {
+    bmiForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const weight = parseFloat(document.getElementById('weight').value);
+        const feet = parseFloat(document.getElementById('feet').value);
+        const inches = parseFloat(document.getElementById('inches').value);
+
+        if (!weight || (isNaN(feet) && feet !== 0) || (isNaN(inches) && inches !== 0)) return;
+
+        // Convert Height to Meters
+        // 1 foot = 0.3048 m, 1 inch = 0.0254 m
+        const heightInMeters = (feet * 0.3048) + (inches * 0.0254);
+
+        if (heightInMeters === 0) return;
+
+        const bmi = weight / (heightInMeters * heightInMeters);
+        const score = bmi.toFixed(1);
+
+        // Update UI
+        document.getElementById('bmiScore').textContent = score;
+        const statusEl = document.getElementById('bmiStatus');
+        const goalEl = document.getElementById('bmiGoalText');
+        const badgeEl = document.getElementById('bmiStatusBadge');
+
+        let status = '', color = '', goal = '';
+
+        if (bmi < 18.5) {
+            status = 'Underweight';
+            color = '#3b82f6'; // Blue
+            goal = 'Focus on nutrient-dense surplus to build mass.';
+        } else if (bmi < 25) {
+            status = 'Healthy';
+            color = '#10b981'; // Green
+            goal = 'Maintain your current activity and nutrition.';
+        } else if (bmi < 30) {
+            status = 'Overweight';
+            color = '#f59e0b'; // Orange
+            goal = 'Target a moderate calorie deficit and cardio.';
+        } else {
+            status = 'Obese';
+            color = '#ef4444'; // Red
+            goal = 'Consult a specialist and start low-impact cardio.';
+        }
+
+        statusEl.textContent = status;
+        statusEl.style.color = '#fff';
+        badgeEl.style.backgroundColor = color; // Ensure badge gets color
+        goalEl.textContent = goal;
+
+        // Switch Views
+        document.getElementById('bmiDefaultInfo').style.display = 'none';
+        const resultCard = document.getElementById('bmiResultCard');
+        resultCard.style.display = 'block';
+        resultCard.classList.add('fade-in-right');
+    });
+}
+
+const recalculateBtn = document.getElementById('recalculateBtn');
+if (recalculateBtn) {
+    recalculateBtn.addEventListener('click', () => {
+        document.getElementById('bmiResultCard').style.display = 'none';
+        document.getElementById('bmiDefaultInfo').style.display = 'block';
+        document.getElementById('bmiForm').reset();
+    });
+}
+
+// 2. Download Report logic (using jsPDF)
+const exportBtn = document.getElementById('exportBtn');
+if (exportBtn) {
+    exportBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!window.jspdf) {
+            alert('PDF Library not loaded');
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Header
+        doc.setFontSize(22);
+        doc.setTextColor(124, 58, 237); // Purple
+        doc.text("Narrow Fitness", 10, 15);
+
+        doc.setFontSize(16);
+        doc.setTextColor(40);
+        doc.text("Progress Report", 10, 25);
+
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`User Email: ${currentUserEmail || 'Guest'}`, 10, 32);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 10, 37);
+
+        // Data Table
+        const tableData = progressData.map(p => [
+            p.date,
+            p.type.toUpperCase(),
+            p.value + (p.type === 'weight' ? ' kg' : ' kg')
+        ]);
+
+        doc.autoTable({
+            head: [['Date', 'Metric', 'Value']],
+            body: tableData,
+            startY: 45,
+            theme: 'grid',
+            headStyles: { fillColor: [124, 58, 237] }
+        });
+
+        doc.save('NarrowFitness_Progress.pdf');
+    });
+}
+
+// 3. Download Attendance logic
+const downloadAttendanceBtn = document.getElementById('downloadAttendanceBtn');
+if (downloadAttendanceBtn) {
+    downloadAttendanceBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!window.jspdf) {
+            alert('PDF Library not loaded');
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(22);
+        doc.setTextColor(124, 58, 237);
+        doc.text("Narrow Fitness", 10, 15);
+
+        doc.setFontSize(16);
+        doc.setTextColor(40);
+        doc.text("Attendance History", 10, 25);
+
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`User Email: ${currentUserEmail || 'Guest'}`, 10, 32);
+
+        // Format data
+        // attendanceData might be strings or dates depending on my fix, ensure consistency
+        const tableData = attendanceData.map(d => {
+            const dateObj = new Date(d);
+            return [
+                dateObj.toLocaleDateString(),
+                dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                'Checked In'
+            ];
+        });
+
+        doc.autoTable({
+            head: [['Date', 'Time (Approx)', 'Status']],
+            body: tableData,
+            startY: 40,
+            theme: 'striped',
+            headStyles: { fillColor: [78, 204, 163] } // Greenish
+        });
+
+        doc.save('NarrowFitness_Attendance.pdf');
+    });
 }
