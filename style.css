@@ -2624,6 +2624,9 @@ body {
     display: flex;
     align-items: center;
     gap: 15px;
+    flex-wrap: wrap;
+    /* Allow wrapping for long names */
+    max-width: 100%;
 }
 
 .user-avatar {
@@ -2637,9 +2640,16 @@ body {
     font-size: 1.5rem;
 }
 
+.user-text {
+    min-width: 0;
+    /* Important for text truncation/wrapping in flex */
+}
+
 .user-text h3 {
     font-size: 1.2rem;
     font-weight: 700;
+    word-break: break-word;
+    /* Prevent long names from breaking layout */
 }
 
 .user-text p {
@@ -3017,6 +3027,12 @@ body {
         grid-template-columns: 1fr;
     }
 
+    .badges-grid-minimal {
+        grid-template-columns: repeat(3, 1fr);
+        /* 3 columns on tablets */
+        gap: 15px;
+    }
+
     .portal-container {
         padding: 0 15px;
     }
@@ -3029,12 +3045,49 @@ body {
 @media (max-width: 600px) {
     .dash-top-bar {
         flex-direction: column;
-        gap: 15px;
+        gap: 20px;
         text-align: center;
+        padding: 20px 15px;
+    }
+
+    .user-info {
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .user-text h3 {
+        font-size: 1rem;
+    }
+
+    .dash-card {
+        padding: 20px 15px;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
     }
 
     .stats-row {
         grid-template-columns: 1fr;
+    }
+
+    .badges-grid-minimal {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 columns on small mobile */
+        gap: 10px;
+    }
+
+    .badge-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.4rem;
+    }
+
+    .badge-name {
+        font-size: 10px;
+        white-space: normal;
+        /* Allow wrapping on small screens */
     }
 
     .btn-floating-report {
@@ -3042,5 +3095,7 @@ body {
         right: 20px;
         padding: 12px 20px;
         font-size: 0.9rem;
+        width: calc(100% - 40px);
+        left: 20px;
     }
 }
