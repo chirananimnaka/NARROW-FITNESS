@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Portal - Narrow Fitness GYM</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💪</text></svg>">
+    <link rel="stylesheet" href="style.css?v=6.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+    <!-- Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+
+<body class="portal-body">
+    <!-- Animated Background -->
+    <div class="portal-bg">
+        <div class="blob-1"></div>
+        <div class="blob-2"></div>
+        <div class="blob-3"></div>
+        <div class="blob-4"></div>
+        <!-- Floating Small Balls -->
+        <div class="particle p1"></div>
+        <div class="particle p2"></div>
+        <div class="particle p3"></div>
+        <div class="particle p4"></div>
+        <div class="particle p5"></div>
+        <div class="particle p6"></div>
+        <div class="particle p7"></div>
+        <div class="particle p8"></div>
+        <div class="particle p9"></div>
+        <div class="particle p10"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="portal-nav">
+        <div class="nav-container">
+            <div class="nav-content">
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">💪</span>
+                    <span class="logo-text">NARROW FITNESS</span>
+                </a>
+                <div class="nav-actions">
+                    <a href="index.html" class="back-link">
+                        <span class="icon">←</span> Back to Main Site
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Portal Content -->
+    <main class="portal-wrapper">
+        <div class="portal-container">
+            <!-- Auth Container (Visible when logged out) -->
+            <div id="auth-container" class="auth-wrapper" data-aos="zoom-in">
+                <div class="auth-glass-card">
+                    <div class="auth-header">
+                        <h2 id="auth-title">Welcome Back</h2>
+                        <p id="auth-subtitle">Login to track your transformation</p>
+                    </div>
+
+                    <!-- Login Form -->
+                    <div id="login-form-box">
+                        <form id="loginForm" class="auth-form">
+                            <div class="form-input-group">
+                                <label>Email Address</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">✉️</span>
+                                    <input type="email" id="loginEmail" required placeholder="name@example.com">
+                                </div>
+                            </div>
+                            <div class="form-input-group">
+                                <label>Password</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">🔒</span>
+                                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-auth-primary">Sign In to Dashboard</button>
+
+                            <div class="auth-divider">
+                                <span>or continue with</span>
+                            </div>
+
+                            <button type="button" id="googleLoginBtn" class="btn-auth-google">
+                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                                    alt="Google">
+                                Google Account
+                            </button>
+
+                            <p class="auth-switch-text">
+                                New here? <a href="#" id="showSignup">Create an account</a>
+                            </p>
+                        </form>
+                    </div>
+
+                    <!-- Signup Form (Hidden) -->
+                    <div id="signup-form-box" style="display: none;">
+                        <form id="signupForm" class="auth-form">
+                            <div class="form-input-group">
+                                <label>Full Name</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">👤</span>
+                                    <input type="text" id="signupName" required placeholder="Your Name">
+                                </div>
+                            </div>
+                            <div class="form-input-group">
+                                <label>Email Address</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">✉️</span>
+                                    <input type="email" id="signupEmail" required placeholder="name@example.com">
+                                </div>
+                            </div>
+                            <div class="form-input-group">
+                                <label>Create Password</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">🔒</span>
+                                    <input type="password" id="signupPassword" required
+                                        placeholder="At least 6 characters">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-auth-primary btn-signup">Create My Account</button>
+
+                            <div class="auth-divider">
+                                <span>or sign up with</span>
+                            </div>
+
+                            <button type="button" id="googleSignupBtn" class="btn-auth-google">
+                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                                    alt="Google">
+                                Google Account
+                            </button>
+
+                            <p class="auth-switch-text">
+                                Already a member? <a href="#" id="showLogin">Sign in here</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard (Hidden until logged in) -->
+            <div id="user-dashboard" class="dashboard-wrapper" style="display: none;">
+                <!-- Header Component -->
+                <div class="dash-top-bar" data-aos="fade-down">
+                    <div class="user-info">
+                        <div class="user-avatar">👤</div>
+                        <div class="user-text">
+                            <h3 id="welcomeMsg">Welcome, Athlete</h3>
+                            <p>Let's reach your goals today</p>
+                        </div>
+                    </div>
+                    <div class="dash-actions">
+                        <button id="logoutBtn" class="btn-logout">Sign Out ↪️</button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-row" data-aos="fade-up">
+                    <div class="stat-box">
+                        <span class="stat-label">Workout Streak</span>
+                        <div class="stat-value"><span id="streakCount" class="animate-number">0</span>
+                            <small>Days</small></div>
+                        <div class="stat-trend hot">🔥 On Fire</div>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Achievement Badges</span>
+                        <div class="stat-value"><span id="badgeCount" class="animate-number">0</span> <small>/ 6</small>
+                        </div>
+                        <div class="stat-trend">🏆 Collecting</div>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Focus of the Day</span>
+                        <div class="stat-value" id="currentDayDisplay" style="font-size: 24px;">Monday</div>
+                        <div class="stat-trend highlight">📅 Today</div>
+                    </div>
+                </div>
+
+                <div class="grid-content-three-col">
+                    <!-- Column 1: Weight Progress -->
+                    <div class="grid-col" data-aos="fade-up">
+                        <div class="dash-card main-chart-card">
+                            <div class="card-header">
+                                <h3>📈 Weight Progress</h3>
+                                <div class="card-actions">
+                                    <button id="exportBtn" class="btn-icon-minimal" title="Download Report">📄</button>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="progressChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Quick Log -->
+                    <div class="grid-col" data-aos="fade-up" data-aos-delay="100">
+                        <div class="dash-card log-card">
+                            <div class="card-header">
+                                <h3>📝 Quick Log</h3>
+                            </div>
+                            <form id="trackerForm" class="minimal-form">
+                                <div class="mini-form-group">
+                                    <input type="date" id="trackerDate" required>
+                                </div>
+                                <div class="mini-form-group">
+                                    <select id="trackerType">
+                                        <option value="weight">Body Weight (kg)</option>
+                                        <option value="bench">Bench Press (kg)</option>
+                                        <option value="squat">Squat (kg)</option>
+                                        <option value="deadlift">Deadlift (kg)</option>
+                                    </select>
+                                </div>
+                                <div class="mini-form-group">
+                                    <input type="number" id="trackerValue" placeholder="Value (kg)" step="0.1" required>
+                                </div>
+                                <button type="submit" class="btn-dash-primary">Update Progress 🚀</button>
+                                <button type="button" id="clearDataBtn" class="btn-dash-danger">Clear History</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Check In -->
+                    <div class="grid-col" data-aos="fade-up" data-aos-delay="200">
+                        <div class="dash-card checkin-card">
+                            <div class="checkin-content">
+                                <div class="mini-form-group">
+                                    <input type="date" id="checkInDate" required>
+                                </div>
+                                <button id="checkInBtn" class="btn-checkin">📍 Check In Now</button>
+                                <p id="checkInStatus" class="status-msg">Not checked in today</p>
+                            </div>
+                            <div class="attendance-mini-history">
+                                <h5>Recent Activity</h5>
+                                <ul id="visitList"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Full Width Trophy Case at Bottom -->
+                <div class="dash-card badges-card full-width-badges" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card-header">
+                        <h3>🏆 Trophy Case</h3>
+                    </div>
+                    <div class="badges-grid-minimal" id="badgesGrid">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Report Button -->
+        <button id="creativePdfBtn" class="btn-floating-report" title="Generate Detailed PDF Report">
+            📊 Download Master Report
+        </button>
+        </div>
+        </div>
+    </main>
+
+    <!-- Portal Specific Footer -->
+    <footer class="portal-footer">
+        <p>&copy; 2026 Narrow Fitness Gym. Dashboard v2.0</p>
+    </footer>
+
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Animation Library JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

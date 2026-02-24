@@ -97,12 +97,19 @@ if (showSignupBtn) showSignupBtn.addEventListener('click', (e) => { e.preventDef
 if (showLoginBtn) showLoginBtn.addEventListener('click', (e) => { e.preventDefault(); toggleAuth('login'); });
 
 function toggleAuth(mode) {
+    const title = document.getElementById('auth-title');
+    const subtitle = document.getElementById('auth-subtitle');
+
     if (mode === 'signup') {
         loginFormBox.style.display = 'none';
         signupFormBox.style.display = 'block';
+        if (title) title.textContent = "Join the Club";
+        if (subtitle) subtitle.textContent = "Start your transformation today";
     } else {
         signupFormBox.style.display = 'none';
         loginFormBox.style.display = 'block';
+        if (title) title.textContent = "Welcome Back";
+        if (subtitle) subtitle.textContent = "Login to track your transformation";
     }
 }
 
@@ -115,7 +122,7 @@ if (typeof auth !== 'undefined') {
     auth.onAuthStateChanged((user) => {
         if (user) {
             currentUserEmail = user.email;
-            welcomeMsg.textContent = `Welcome, ${user.displayName || 'Athlete'} 👋`;
+            if (welcomeMsg) welcomeMsg.textContent = `Welcome, ${user.displayName || 'Athlete'} 👋`;
             showDashboard(user.email);
         } else {
             currentUserEmail = null;
@@ -213,12 +220,14 @@ if (logoutBtn) {
 // ===== DASHBOARD & DATA LOGIC =====
 
 function showAuth() {
+    if (!authContainer || !userDashboard) return;
     userDashboard.style.display = 'none';
     authContainer.style.display = 'flex';
     toggleAuth('login');
 }
 
 async function showDashboard(email) {
+    if (!userDashboard || !authContainer) return;
     authContainer.style.display = 'none';
     userDashboard.style.display = 'grid'; // Maintain grid layout
 
@@ -320,16 +329,36 @@ if (trackerForm) {
 
 // Check In to Firestore
 const checkInBtn = document.getElementById('checkInBtn');
+const checkInDateField = document.getElementById('checkInDate');
+
+// Set default date to today
+if (checkInDateField) {
+    const today = new Date();
+    const offset = today.getTimezoneOffset();
+    const localToday = new Date(today.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
+    checkInDateField.value = localToday;
+
+    checkInDateField.addEventListener('change', () => {
+        updateCheckInStatus();
+    });
+}
+
 if (checkInBtn) {
     checkInBtn.addEventListener('click', async () => {
         if (!currentUserEmail) {
             alert("Please log in to check in.");
             return;
         }
-        const today = new Date().toISOString().split('T')[0];
 
-        if (!attendanceData.includes(today)) {
-            attendanceData.push(today);
+        const selectedDate = checkInDateField.value;
+        if (!selectedDate) {
+            alert("Please select a date.");
+            return;
+        }
+
+        if (!attendanceData.includes(selectedDate)) {
+            attendanceData.push(selectedDate);
+            attendanceData.sort((a, b) => new Date(a) - new Date(b));
 
             try {
                 await db.collection('userData').doc(currentUserEmail).set({
@@ -337,19 +366,19 @@ if (checkInBtn) {
                 }, { merge: true });
 
                 updateDashboardUI();
-                alert("Checked In to Cloud! 💪");
+                createConfetti(); // Celebrate check-in!
+                alert(`Successfully checked in for ${selectedDate}! 💪`);
             } catch (error) {
                 console.error("Firestore Check-in failed:", error);
-
                 const localData = JSON.parse(localStorage.getItem(`narrowData_${currentUserEmail}`) || '{}');
                 localData.attendance = attendanceData;
                 localStorage.setItem(`narrowData_${currentUserEmail}`, JSON.stringify(localData));
-
                 updateDashboardUI();
-                alert("Checked In Locally! 💪");
+                createConfetti(); // Celebrate locally too!
+                alert(`Checked in locally for ${selectedDate}! 💪`);
             }
         } else {
-            alert("You already checked in today!");
+            alert(`You are already checked in for ${selectedDate}.`);
         }
     });
 }
@@ -397,6 +426,7 @@ function updateDashboardUI() {
 }
 
 function updateDailyPlan() {
+    if (!currentDayDisplay || !dailyPlanContent) return;
     const today = new Date().getDay(); // 0 = Sunday
     const plan = dailyPlans[today];
 
@@ -412,6 +442,7 @@ function updateDailyPlan() {
 }
 
 function updateBadges() {
+    if (!badgesGrid || !badgeCountEl) return;
     badgesGrid.innerHTML = '';
     let earnedCount = 0;
 
@@ -429,7 +460,41 @@ function updateBadges() {
         badgesGrid.appendChild(badgeEl);
     });
 
-    badgeCountEl.textContent = `${earnedCount}/${badgeDefinitions.length}`;
+    animateValue(badgeCountEl, 0, earnedCount, 1500);
+}
+
+function updateStreak() {
+    if (!streakCountEl) return;
+    const streak = calculateStreak(attendanceData);
+    animateValue(streakCountEl, 0, streak, 1500);
+}
+
+function animateValue(obj, start, end, duration) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        obj.innerHTML = Math.floor(progress * (end - start) + start);
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+    window.requestAnimationFrame(step);
+}
+
+function createConfetti() {
+    const colors = ['#7c3aed', '#10b981', '#3b82f6', '#f59e0b', '#ef4444'];
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        confetti.style.opacity = Math.random();
+        document.body.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 5000);
+    }
 }
 
 function calculateStreak(data) {
@@ -466,19 +531,27 @@ function calculateStreak(data) {
 }
 
 function updateStreak() {
+    if (!streakCountEl) return;
     const streak = calculateStreak(attendanceData);
     streakCountEl.textContent = `${streak} Days`;
 }
 
 function updateCheckInStatus() {
-    const today = new Date().toISOString().split('T')[0];
     const statusEl = document.getElementById('checkInStatus');
-    if (attendanceData.includes(today)) {
-        statusEl.textContent = "✅ Checked in today!";
+    const dateInput = document.getElementById('checkInDate');
+    if (!statusEl || !dateInput) return;
+
+    const selectedDate = dateInput.value;
+    const isCheckedIn = attendanceData.includes(selectedDate);
+
+    if (isCheckedIn) {
+        statusEl.textContent = `✅ Checked in for ${selectedDate}`;
         statusEl.style.color = "#4ecca3";
+        if (checkInBtn) checkInBtn.disabled = true;
     } else {
-        statusEl.textContent = "Not checked in today.";
+        statusEl.textContent = `Not checked in for ${selectedDate}`;
         statusEl.style.color = "var(--text-gray)";
+        if (checkInBtn) checkInBtn.disabled = false;
     }
 }
 
@@ -512,6 +585,7 @@ function updatePRs() {
 }
 
 function renderSchedule() {
+    if (!scheduleTabs) return;
     // Add logic to switch tabs
     const buttons = scheduleTabs.querySelectorAll('.tab-btn');
     buttons.forEach(btn => {
@@ -1030,13 +1104,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Title
             doc.setFontSize(24);
             doc.setTextColor(255, 255, 255);
-            doc.font = "helvetica";
             doc.setFont("helvetica", "bold");
             doc.text("NARROW FITNESS", 105, 20, { align: 'center' });
 
             doc.setFontSize(12);
             doc.setTextColor(191, 219, 254); // Light Blue Text
-            doc.text("OFFICIAL ATTENDANCE & WEIGHT REPORT", 105, 30, { align: 'center', charSpace: 1.5 });
+            doc.text("OFFICIAL ATTENDANCE & WEIGHT REPORT", 105, 30, { align: 'center' });
 
             // User Info Section & Quote
             doc.setDrawColor(200, 200, 200);
@@ -1048,9 +1121,9 @@ document.addEventListener('DOMContentLoaded', () => {
             doc.text("ATHLETE PROFILE", 14, 48);
 
             doc.setFont("helvetica", "normal");
-            doc.text(`Name: ${currentUserEmail.split('@')[0]}`, 14, 54);
-            doc.text(`Email: ${currentUserEmail}`, 14, 60); // Adjusted Y
-            doc.text(`Generated: ${new Date().toLocaleDateString()} @ ${new Date().toLocaleTimeString()}`, 14, 66);
+            doc.text(`Name: ${currentUserEmail.split('@')[0]}`, 14, 53);
+            doc.text(`Email: ${currentUserEmail}`, 14, 58); // Adjusted Y
+            doc.text(`Generated: ${new Date().toLocaleDateString()} @ ${new Date().toLocaleTimeString()}`, 14, 63);
 
             // Motivational Quote (Right aligned)
             doc.setFontSize(10);

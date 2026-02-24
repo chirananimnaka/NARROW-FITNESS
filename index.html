@@ -22,10 +22,10 @@
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <div class="logo">
+            <a href="#home" class="logo">
                 <span class="logo-icon">💪</span>
                 <span class="logo-text">NARROW FITNESS</span>
-            </div>
+            </a>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="#home" class="nav-link active">Home</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
@@ -34,7 +34,7 @@
                 <li><a href="#bmi-calculator" class="nav-link">BMI Calculator</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
-            <a href="#portal" class="cta-btn">Member Portal</a>
+            <a href="portal.html" class="cta-btn">Member Portal</a>
             <div class="hamburger" id="hamburger">
                 <span></span>
                 <span></span>
@@ -408,205 +408,9 @@
         </div>
     </section>
 
-    <!-- Member Portal Section (Login/Signup + Dashboard) -->
-    <section id="portal" class="progress-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Member Portal</h2>
-                <p class="section-subtitle">Track Your Journey & Visualize Gains</p>
-            </div>
 
-            <!-- Auth Container (Visible when logged out) -->
-            <div id="auth-container" class="auth-container" data-aos="zoom-in">
-                <div class="auth-card">
-                    <!-- Login Form -->
-                    <div id="login-form-box">
-                        <h3>Welcome Back 👋</h3>
-                        <form id="loginForm">
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" id="loginEmail" required placeholder="your@email.com">
-                            </div>
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" id="loginPassword" required placeholder="••••••••">
-                            </div>
-                            <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
-                            <div class="auth-divider"><span>OR</span></div>
-                            <button type="button" id="googleLoginBtn" class="btn btn-outline"
-                                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"
-                                    height="18" alt="Google">
-                                Continue with Google
-                            </button>
-                            <p class="auth-switch">New member? <a href="#" id="showSignup">Create Account</a></p>
-                        </form>
-                    </div>
 
-                    <!-- Signup Form (Hidden) -->
-                    <div id="signup-form-box" style="display: none;">
-                        <h3>Join the Transformation 🚀</h3>
-                        <form id="signupForm">
-                            <div class="form-group">
-                                <label>Full Name</label>
-                                <input type="text" id="signupName" required placeholder="John Doe">
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" id="signupEmail" required placeholder="your@email.com">
-                            </div>
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" id="signupPassword" required placeholder="Create a password">
-                            </div>
-                            <button type="submit" class="btn btn-secondary" style="width: 100%;">Sign Up</button>
-                            <div class="auth-divider"><span>OR</span></div>
-                            <button type="button" id="googleSignupBtn" class="btn btn-outline"
-                                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"
-                                    height="18" alt="Google">
-                                Sign Up with Google
-                            </button>
-                            <p class="auth-switch">Already have an account? <a href="#" id="showLogin">Sign In</a></p>
-                        </form>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Dashboard (Hidden until logged in) -->
-            <div id="user-dashboard" class="dashboard-grid" style="display: none;">
-                <!-- Header & Quick Stats -->
-                <div class="dashboard-header-container" style="grid-column: 1 / -1; margin-bottom: 20px;">
-                    <div class="header-top">
-                        <h3 id="welcomeMsg" style="color: var(--text-light);">Welcome, User</h3>
-                        <button id="logoutBtn" class="btn-sm btn-danger-soft">Logout ↪️</button>
-                    </div>
-                    <div class="dashboard-stats-bar">
-                        <div class="mini-stat">🔥 Streak: <strong id="streakCount">0 Days</strong></div>
-                        <div class="mini-stat">🏆 Badges: <strong id="badgeCount">0/6</strong></div>
-                        <div class="mini-stat">📅 Today: <strong id="currentDayDisplay">Monday</strong></div>
-                    </div>
-                </div>
-
-                <!-- Row 1: Tracker Input & Chart -->
-                <div class="tracker-input-card">
-                    <h3>📝 Log Workout</h3>
-                    <form id="trackerForm">
-                        <div class="form-group">
-                            <label>Date</label>
-                            <input type="date" id="trackerDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Metric</label>
-                            <select id="trackerType">
-                                <option value="weight">Body Weight (kg)</option>
-                                <option value="bench">Bench Press (kg)</option>
-                                <option value="squat">Squat (kg)</option>
-                                <option value="deadlift">Deadlift (kg)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Value (kg)</label>
-                            <input type="number" id="trackerValue" placeholder="e.g. 70.5" step="0.1" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">Add Entry 📈</button>
-                    </form>
-
-                    <div class="tracker-buttons" style="display: flex; gap: 10px; margin-top: 15px;">
-                        <button id="exportBtn" class="btn-secondary"
-                            style="flex: 1; padding: 10px; font-size: 14px;">Download Report 📄</button>
-                        <button id="clearDataBtn" class="btn-clear"
-                            style="flex: 1; margin: 0; border: 1px solid #ef4444; border-radius: 8px;">Clear History
-                            🗑️</button>
-                    </div>
-                </div>
-
-                <div class="tracker-chart-card">
-                    <canvas id="progressChart"></canvas>
-                </div>
-
-                <!-- Row 2: Daily Plan & Badges -->
-                <div class="dashboard-card daily-plan-card">
-                    <h3>📅 Today's Smart Plan</h3>
-                    <div id="dailyPlanContent" class="plan-content">
-                        <!-- JS Injected -->
-                        <p>Loading plan...</p>
-                    </div>
-                </div>
-
-                <div class="dashboard-card attendance-card">
-                    <h3>📍 Gym Attendance</h3>
-                    <div style="text-align: center; margin-bottom: 15px;">
-                        <button id="checkInBtn" class="btn-primary"
-                            style="width: 100%; padding: 15px; border-radius: 12px; font-size: 16px;">Check In Now
-                            📍</button>
-                        <p id="checkInStatus" style="margin-top: 10px; font-size: 14px; color: var(--text-gray);">Not
-                            checked in today.</p>
-
-                        <!-- Past Attendance Input -->
-                        <div style="margin-top: 15px; display: flex; gap: 5px; justify-content: center;">
-                            <input type="date" id="pastAttendanceDate"
-                                style="padding: 8px; border-radius: 8px; border: 1px solid #444; background: #222; color: white;">
-                            <button id="addPastAttendanceBtn" class="btn-sm btn-outline">Add Past</button>
-                        </div>
-                    </div>
-                    <div class="attendance-history">
-                        <h4
-                            style="font-size: 14px; color: var(--text-light); margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;">
-                            Recent Visits</h4>
-                        <ul id="visitList"
-                            style="list-style: none; font-size: 13px; color: var(--text-gray); max-height: 100px; overflow-y: auto;">
-                            <!-- Injected via JS -->
-                        </ul>
-                        <div style="display: flex; gap: 5px; margin-top: 10px;">
-                            <button id="downloadAttendanceBtn" class="btn-sm btn-primary-soft" style="flex: 1;">Download
-                                History 📄</button>
-                            <button id="clearAttendanceBtn" class="btn-sm"
-                                style="flex: 1; border: 1px solid #ef4444; background: transparent; color: #ef4444; border-radius: 8px; cursor: pointer;">Clear
-                                History �️</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dashboard-card pr-card">
-                    <h3>🥇 Reports Center</h3>
-                    <div
-                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 15px; min-height: 150px;">
-                        <p style="text-align: center; color: var(--text-gray); margin-bottom: 5px;">Generate
-                            comprehensive reports including your attendance and weight progress.</p>
-                        <button id="creativePdfBtn" class="btn-primary"
-                            style="width: 100%; padding: 15px; font-size: 16px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">
-                            Download Full Report 📊
-                        </button>
-                    </div>
-                </div>
-
-                <div class="dashboard-card badges-card">
-                    <h3>🏆 Your Trophy Case</h3>
-                    <div class="badges-grid" id="badgesGrid">
-                        <!-- JS Injected -->
-                    </div>
-                </div>
-
-                <!-- Row 3: Class Schedule -->
-                <div class="dashboard-card schedule-card" style="grid-column: 1 / -1;">
-                    <h3>🗓️ Class Schedule & Booking</h3>
-                    <div class="schedule-tabs" id="scheduleTabs">
-                        <button class="tab-btn active" data-day="Mon">Mon</button>
-                        <button class="tab-btn" data-day="Tue">Tue</button>
-                        <button class="tab-btn" data-day="Wed">Wed</button>
-                        <button class="tab-btn" data-day="Thu">Thu</button>
-                        <button class="tab-btn" data-day="Fri">Fri</button>
-                        <button class="tab-btn" data-day="Sat">Sat</button>
-                        <button class="tab-btn" data-day="Sun">Sun</button>
-                    </div>
-                    <div id="scheduleList" class="schedule-list">
-                        <!-- JS Injected -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
