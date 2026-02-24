@@ -497,34 +497,34 @@ function createConfetti() {
     }
 }
 
+// Streak calculation logic
 function calculateStreak(data) {
-    // Basic streak calculation logic based on dates in progressData or attendanceData
-    if (attendanceData.length === 0) return 0;
+    if (!attendanceData || attendanceData.length === 0) return 0;
 
     const sortedDates = [...new Set(attendanceData)].sort((a, b) => new Date(b) - new Date(a));
     let streak = 0;
-    let current = new Date();
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    // Check if checked in today
-    const todayStr = current.toISOString().split('T')[0];
-    if (sortedDates[0] === todayStr) {
-        streak = 1;
-        current.setDate(current.getDate() - 1);
-    }
+    let checkDate = new Date(today);
 
-    // Look back
+    // Check if we checked in today or yesterday (to keep streak alive)
+    let lastVisit = new Date(sortedDates[0]);
+    lastVisit.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.floor((today - lastVisit) / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 1) return 0; // Streak broken
+
     for (let i = 0; i < sortedDates.length; i++) {
-        const dateStr = sortedDates[i];
-        if (dateStr === todayStr && i === 0) continue; // Already counted
+        const visitDate = new Date(sortedDates[i]);
+        visitDate.setHours(0, 0, 0, 0);
 
-        const compareStr = current.toISOString().split('T')[0];
-
-        if (dateStr === compareStr) {
+        if (visitDate.getTime() === checkDate.getTime()) {
             streak++;
-            current.setDate(current.getDate() - 1);
-        } else {
-            // Basic gap check - ideally would fill gaps
-            break;
+            checkDate.setDate(checkDate.getDate() - 1);
+        } else if (visitDate.getTime() < checkDate.getTime()) {
+            break; // Gap found
         }
     }
     return streak;
@@ -533,7 +533,7 @@ function calculateStreak(data) {
 function updateStreak() {
     if (!streakCountEl) return;
     const streak = calculateStreak(attendanceData);
-    streakCountEl.textContent = `${streak} Days`;
+    animateValue(streakCountEl, 0, streak, 1500);
 }
 
 function updateCheckInStatus() {
@@ -890,7 +890,7 @@ if (downloadAttendanceBtn) {
 // Ensure DOM is fully loaded before attaching complex event listeners
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 4. Clear History Logic
+    // 4. Clear History Logic (Firestore)
     const clearBtn = document.getElementById('clearDataBtn');
     if (clearBtn) {
         clearBtn.addEventListener('click', async () => {
@@ -900,39 +900,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (!confirm("Are you sure you want to clear ALL your tracking history? This cannot be undone.")) return;
 
-            // Optimistic UI update
-            const originalData = [...progressData];
-            progressData = [];
-
             try {
-                // Update via API - we send empty array
-                const response = await fetch(`${API_URL}/data`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: currentUserEmail,
-                        type: 'progress',
-                        data: []
-                    })
+                await db.collection('userData').doc(currentUserEmail).update({
+                    progress: []
                 });
-
-                if (!response.ok) throw new Error('Failed to clear data');
-
+                progressData = [];
                 updateDashboardUI();
                 updateChart();
                 alert("History Cleared! 🗑️");
             } catch (e) {
                 console.error("Error clearing data:", e);
-                progressData = originalData; // Revert
                 alert("Error clearing data: " + e.message);
-                updateDashboardUI();
             }
         });
-    } else {
-        console.error("Clear Data Button not found in DOM");
     }
 
-    // 4.5 Clear Attendance Logic (NEW)
+    // 4.5 Clear Attendance Logic (Firestore)
     const clearAttendanceBtn = document.getElementById('clearAttendanceBtn');
     if (clearAttendanceBtn) {
         clearAttendanceBtn.addEventListener('click', async () => {
@@ -942,36 +925,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (!confirm("Are you sure you want to clear ALL your ATTENDANCE history? This cannot be undone.")) return;
 
-            // Optimistic Update
-            const originalAttendance = [...attendanceData];
-            attendanceData = [];
-
             try {
-                const response = await fetch(`${API_URL}/data`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: currentUserEmail,
-                        type: 'attendance',
-                        data: []
-                    })
+                await db.collection('userData').doc(currentUserEmail).update({
+                    attendance: []
                 });
-
-                if (!response.ok) throw new Error('Failed to clear attendance');
-
-                updateDashboardUI(); // This will clear the list and reset streak
+                attendanceData = [];
+                updateDashboardUI();
                 renderVisitList();
                 alert("Attendance History Cleared! 🗑️");
             } catch (e) {
                 console.error("Error clearing attendance:", e);
-                attendanceData = originalAttendance; // Revert
                 alert("Error clearing attendance: " + e.message);
-                updateDashboardUI();
             }
         });
     }
 
-    // 5. Add Past Attendance Logic
+    // 5. Add Past Attendance Logic (Firestore)
     const addPastBtn = document.getElementById('addPastAttendanceBtn');
     const pastDateInput = document.getElementById('pastAttendanceDate');
 
@@ -993,46 +962,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Store original for revert
-            const originalAttendance = [...attendanceData];
-
             attendanceData.push(dateVal);
-            // Sort to keep history chronological
             attendanceData.sort((a, b) => new Date(a) - new Date(b));
 
             try {
-                const response = await fetch(`${API_URL}/data`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: currentUserEmail,
-                        type: 'attendance',
-                        data: attendanceData
-                    })
+                await db.collection('userData').doc(currentUserEmail).update({
+                    attendance: attendanceData
                 });
-
-                if (!response.ok) throw new Error('Failed to add past attendance');
-
                 updateDashboardUI();
-                // Explicitly re-render list if it exists
-                if (typeof renderVisitList === 'function') {
-                    renderVisitList();
-                }
+                renderVisitList();
                 alert(`Attendance added for ${dateVal}! ✅`);
-                pastDateInput.value = ''; // Reset input
-            } catch (e) {
-                console.warn("API Add Past Attendance failed, saving locally:", e);
-
-                // Save to LocalStorage
-                const localData = JSON.parse(localStorage.getItem(`narrowData_${currentUserEmail}`) || '{}');
-                localData.attendance = attendanceData;
-                localStorage.setItem(`narrowData_${currentUserEmail}`, JSON.stringify(localData));
-
-                updateDashboardUI();
-                if (typeof renderVisitList === 'function') renderVisitList();
-
-                alert(`Attendance added locally for ${dateVal}! (Offline) ✅`);
                 pastDateInput.value = '';
+            } catch (e) {
+                console.error("Error adding past attendance:", e);
+                alert("Error: " + e.message);
             }
         });
     }
