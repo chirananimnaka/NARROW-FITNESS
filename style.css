@@ -9,12 +9,16 @@ section {
     scroll-margin-top: 100px;
     /* Offset for fixed header */
     overflow-x: hidden !important;
+    width: 100%;
+    position: relative;
 }
 
 .container,
 .portal-container,
-.portal-wrapper {
+.portal-wrapper,
+.dashboard-wrapper {
     overflow-x: hidden !important;
+    max-width: 100%;
 }
 
 :root {
@@ -1071,17 +1075,19 @@ body {
 /* ===== FLOATING WHATSAPP BUTTON ===== */
 .whatsapp-float {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
+    bottom: 20px;
+    left: 20px;
+    /* Moved to "start" (left) as requested */
+    width: 50px;
+    height: 50px;
     background: #25D366;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5);
-    z-index: 999;
+    z-index: 2000;
+    /* Higher z-index to stay on top */
     transition: var(--transition-smooth);
     text-decoration: none;
 }
@@ -1911,9 +1917,20 @@ body {
     .programs-grid,
     .about-grid,
     .pricing-card-wrapper,
-    .contact-grid {
-        grid-template-columns: 1fr;
-        width: 100%;
+    .contact-grid,
+    .stats-grid,
+    .testimonials-grid {
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+        gap: 20px;
+    }
+
+    .testimonial-card,
+    .about-card,
+    .stat-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     .pricing-card {
@@ -1929,9 +1946,20 @@ body {
 
     .container {
         padding: 0 15px;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+    }
+
+    /* Disable side animations that cause horizontal scroll */
+    [data-aos^="fade-"][data-aos$="-left"],
+    [data-aos^="fade-"][data-aos$="-right"],
+    .fade-in-left,
+    .fade-in-right,
+    .slideInLeft {
+        transform: none !important;
+        animation: fadeInUp 0.8s ease-out forwards !important;
     }
 }
 
