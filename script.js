@@ -1,4 +1,32 @@
 
+// Initialize AOS (Animate On Scroll)
+if (typeof AOS !== 'undefined') {
+    AOS.init({
+        duration: 1000,
+        once: true,
+        offset: 100
+    });
+}
+
+// ===== FIREBASE CONFIGURATION =====
+// Replace this with your actual Firebase config from the Firebase Console
+const firebaseConfig = {
+    apiKey: "AIzaSyBVTje_rUQmhkrsIVfVL4uHtMcw1HHZ8TY",
+    authDomain: "narrow-fitness-df839.firebaseapp.com",
+    projectId: "narrow-fitness-df839",
+    storageBucket: "narrow-fitness-df839.firebasestorage.app",
+    messagingSenderId: "480472344172",
+    appId: "1:480472344172:web:e7c3ded98e039961ddda49",
+    measurementId: "G-FE64REQEYJ"
+};
+
+// Initialize Firebase
+if (typeof firebase !== 'undefined') {
+    firebase.initializeApp(firebaseConfig);
+    var auth = firebase.auth();
+    var db = firebase.firestore();
+}
+
 // ===== UI ELEMENTS =====
 const navbar = document.getElementById('navbar');
 const hamburger = document.getElementById('hamburger');
@@ -39,7 +67,7 @@ let progressData = [];
 let userBookings = [];
 let attendanceData = [];
 
-const API_URL = 'http://localhost:3000/api';
+
 
 // ===== NAVIGATION & UI LOGIC =====
 
@@ -80,16 +108,21 @@ function toggleAuth(mode) {
 
 // ===== AUTHENTICATION LOGIC (LOCAL API) =====
 
-// Check for existing session (simulate persistence)
-document.addEventListener('DOMContentLoaded', () => {
-    const savedUser = localStorage.getItem('narrowUser');
-    if (savedUser) {
-        currentUserEmail = savedUser;
-        showDashboard(savedUser);
-    } else {
-        showAuth();
-    }
-});
+// ===== AUTHENTICATION LOGIC (FIREBASE) =====
+
+// Auth state observer
+if (typeof auth !== 'undefined') {
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            currentUserEmail = user.email;
+            welcomeMsg.textContent = `Welcome, ${user.displayName || 'Athlete'} 👋`;
+            showDashboard(user.email);
+        } else {
+            currentUserEmail = null;
+            showAuth();
+        }
+    });
+}
 
 // Login Function
 if (loginForm) {
@@ -99,45 +132,10 @@ if (loginForm) {
         const password = document.getElementById('loginPassword').value.trim();
 
         try {
-            const response = await fetch(`${API_URL}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                currentUserEmail = data.user.email;
-                localStorage.setItem('narrowUser', currentUserEmail);
-                showDashboard(currentUserEmail);
-            } else {
-                throw new Error(data.error || 'Login failed');
-            }
+            await auth.signInWithEmailAndPassword(email, password);
         } catch (error) {
-            console.warn("API Login failed, falling back to LocalStorage demo mode:", error);
-
-            // FALLBACK TO LOCAL STORAGE (For GitHub Pages / Mobile Demo)
-            const localUsers = JSON.parse(localStorage.getItem('narrowUsers') || '[]');
-            const user = localUsers.find(u => u.email === email && u.password === password);
-
-            if (user) {
-                currentUserEmail = user.email;
-                localStorage.setItem('narrowUser', currentUserEmail);
-                showDashboard(currentUserEmail);
-                alert("Logged in (Demo Mode) ✅");
-            } else {
-                // If user doesn't exist locally, maybe they just want to try the app?
-                // Minimal fallback for "chirana.info@gmail.com" specifically as requested
-                if (email === 'chirana.info@gmail.com') {
-                    currentUserEmail = email;
-                    localStorage.setItem('narrowUser', currentUserEmail);
-                    showDashboard(currentUserEmail);
-                    alert("Welcome back, Chirana! (Offline Mode) 👋");
-                } else {
-                    alert("Login Failed: Server unreachable and user not found locally.");
-                }
-            }
+            console.error("Login failed:", error);
+            alert("Login Failed: " + error.message);
         }
     });
 }
@@ -151,45 +149,64 @@ if (signupForm) {
         const password = document.getElementById('signupPassword').value.trim();
 
         try {
-            const response = await fetch(`${API_URL}/signup`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password })
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            await userCredential.user.updateProfile({ displayName: name });
+
+            // Create user document in Firestore
+            await db.collection('users').doc(email).set({
+                name: name,
+                email: email,
+                createdAt: new Date()
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Account created successfully! Please log in.");
-                toggleAuth('login');
-            } else {
-                throw new Error(data.error || 'Signup failed');
-            }
+            alert("Account created successfully!");
         } catch (error) {
-            console.warn("API Signup failed, falling back to LocalStorage:", error);
-
-            // Save to Local Storage
-            const localUsers = JSON.parse(localStorage.getItem('narrowUsers') || '[]');
-            if (localUsers.find(u => u.email === email)) {
-                alert("User already exists (Offline).");
-                return;
-            }
-
-            localUsers.push({ name, email, password });
-            localStorage.setItem('narrowUsers', JSON.stringify(localUsers));
-
-            alert("Account created! (Offline Mode) ✅");
-            toggleAuth('login');
+            console.error("Signup failed:", error);
+            alert("Signup Failed: " + error.message);
         }
     });
 }
 
+// Google Auth (Login & Signup)
+const googleLoginBtn = document.getElementById('googleLoginBtn');
+const googleSignupBtn = document.getElementById('googleSignupBtn');
+let isAuthProcess = false; // Flag to prevent multiple clicks
+
+async function handleGoogleAuth() {
+    if (isAuthProcess) return; // Exit if already processing
+    isAuthProcess = true;
+
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try {
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+
+        const userDoc = await db.collection('users').doc(user.email).get();
+        if (!userDoc.exists) {
+            await db.collection('users').doc(user.email).set({
+                name: user.displayName,
+                email: user.email,
+                createdAt: new Date()
+            });
+        }
+    } catch (error) {
+        // Only show alert if it's not a cancelled request or closed popup
+        if (error.code !== 'auth/cancelled-popup-request' && error.code !== 'auth/popup-closed-by-user') {
+            console.error("Google Auth failed:", error);
+            alert("Google Authentication Failed: " + error.message);
+        }
+    } finally {
+        isAuthProcess = false; // Reset flag
+    }
+}
+
+if (googleLoginBtn) googleLoginBtn.addEventListener('click', handleGoogleAuth);
+if (googleSignupBtn) googleSignupBtn.addEventListener('click', handleGoogleAuth);
+
 // Logout Function
 if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-        currentUserEmail = null;
-        localStorage.removeItem('narrowUser');
-        showAuth();
+        auth.signOut();
     });
 }
 
@@ -213,27 +230,26 @@ async function showDashboard(email) {
     }
 }
 
-// Load Data from Local API
+// Load Data from Firestore
 async function loadUserData(email) {
     try {
-        const response = await fetch(`${API_URL}/data/${email}`);
-        if (!response.ok) throw new Error('Failed to fetch data');
+        const doc = await db.collection('userData').doc(email).get();
+        if (doc.exists) {
+            const data = doc.data();
+            progressData = data.progress || [];
+            attendanceData = (data.attendance || []).map(d => {
+                if (typeof d === 'string') return d.split('T')[0];
+                return new Date(d).toISOString().split('T')[0];
+            });
+            userBookings = data.bookings || [];
+        } else {
+            // No data yet, initialize with empty values
+            progressData = [];
+            attendanceData = [];
+            userBookings = [];
+            console.log("No existing data found for this user in cloud.");
+        }
 
-        const data = await response.json();
-
-        // Use user email/name for welcome (API doesn't return name in /data/:email yet, so we default or need to update API)
-        // Ideally we'd store name in localStorage too or fetch it. For now, use 'Athlete' or email.
-        welcomeMsg.textContent = `Welcome, Athlete 👋`;
-
-        progressData = data.progress || [];
-        attendanceData = (data.attendance || []).map(d => {
-            // Handle both full ISO strings and simple dates safely
-            if (typeof d === 'string') return d.split('T')[0];
-            return new Date(d).toISOString().split('T')[0];
-        });
-        userBookings = data.bookings || [];
-
-        // Set date input to today
         if (trackerDate) trackerDate.valueAsDate = new Date();
 
         updateDashboardUI();
@@ -241,29 +257,33 @@ async function loadUserData(email) {
         else updateChart();
 
     } catch (error) {
-        console.warn("API Load failed, falling back to LocalStorage:", error);
+        console.error("Firestore Load Error:", error);
+        // Only alert if the error is not a permission issue (which we fix via rules)
+        if (error.code === 'permission-denied') {
+            alert("Firestore Permissions issue. Please check your Firebase Security Rules.");
+        } else {
+            console.warn("Using offline storage fallback.");
+        }
 
-        // Fallback: Load from local storage if API fails
         const localData = JSON.parse(localStorage.getItem(`narrowData_${email}`) || '{}');
         progressData = localData.progress || [];
         attendanceData = localData.attendance || [];
         userBookings = localData.bookings || [];
 
-        // Set date input to today
-        if (trackerDate) trackerDate.valueAsDate = new Date();
-
-        welcomeMsg.textContent = `Welcome, Athlete (Offline) 👋`;
         updateDashboardUI();
         if (!chartInstance) initChart();
         else updateChart();
     }
 }
 
-// Save Track Data
+// Save Track Data to Firestore
 if (trackerForm) {
     trackerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (!currentUserEmail) return;
+        if (!currentUserEmail) {
+            alert("Please log in to save progress.");
+            return;
+        }
 
         const entry = {
             id: Date.now(),
@@ -274,74 +294,59 @@ if (trackerForm) {
 
         progressData.push(entry);
 
-        // Update via API
         try {
-            const response = await fetch(`${API_URL}/data`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: currentUserEmail,
-                    type: 'progress',
-                    data: progressData
-                })
-            });
-
-            if (!response.ok) throw new Error('Failed to save');
+            await db.collection('userData').doc(currentUserEmail).set({
+                progress: progressData,
+                attendance: attendanceData,
+                bookings: userBookings
+            }, { merge: true });
 
             updateDashboardUI();
             updateChart();
-            alert("Entry Saved! 📈");
-        } catch (e) {
-            console.warn("API Save failed, saving locally:", e);
-
-            // Save to LocalStorage
+            alert("Entry Saved to Cloud! 📈");
+        } catch (error) {
+            console.error("Firestore Save failed:", error);
+            // Save to LocalStorage as backup
             const localData = JSON.parse(localStorage.getItem(`narrowData_${currentUserEmail}`) || '{}');
             localData.progress = progressData;
             localStorage.setItem(`narrowData_${currentUserEmail}`, JSON.stringify(localData));
 
             updateDashboardUI();
             updateChart();
-            alert("Entry Saved Locally! (Offline) 📈");
+            alert("Saved Locally (Offline) �");
         }
     });
 }
 
-// Check In
+// Check In to Firestore
 const checkInBtn = document.getElementById('checkInBtn');
 if (checkInBtn) {
     checkInBtn.addEventListener('click', async () => {
-        if (!currentUserEmail) return;
+        if (!currentUserEmail) {
+            alert("Please log in to check in.");
+            return;
+        }
         const today = new Date().toISOString().split('T')[0];
 
         if (!attendanceData.includes(today)) {
             attendanceData.push(today);
 
-            // Save via API
             try {
-                const response = await fetch(`${API_URL}/data`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: currentUserEmail,
-                        type: 'attendance',
-                        data: attendanceData
-                    })
-                });
-
-                if (!response.ok) throw new Error('Failed to check in');
+                await db.collection('userData').doc(currentUserEmail).set({
+                    attendance: attendanceData
+                }, { merge: true });
 
                 updateDashboardUI();
-                alert("Checked In! 💪");
-            } catch (e) {
-                console.warn("API Check-in failed, saving locally:", e);
+                alert("Checked In to Cloud! 💪");
+            } catch (error) {
+                console.error("Firestore Check-in failed:", error);
 
-                // Save to LocalStorage
                 const localData = JSON.parse(localStorage.getItem(`narrowData_${currentUserEmail}`) || '{}');
                 localData.attendance = attendanceData;
                 localStorage.setItem(`narrowData_${currentUserEmail}`, JSON.stringify(localData));
 
                 updateDashboardUI();
-                alert("Checked In Locally! (Offline) 💪");
+                alert("Checked In Locally! 💪");
             }
         } else {
             alert("You already checked in today!");

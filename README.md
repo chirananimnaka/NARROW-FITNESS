@@ -4,6 +4,9 @@ Welcome to the Narrow Fitness GYM website! This is a modern, responsive gym webs
 
 ## 🌟 Features
 
+✅ **Google Firebase Integration** - Cloud Authentication (Email/Google) and Real-time Firestore Database
+✅ **AOS Animations** - Premium scroll animations for a modern look
+✅ **Member Portal** - Personalized dashboard to track weight and attendance
 ✅ **Stunning Image Slider** - Auto-playing hero slider with 4 gym images
 ✅ **Smooth Animations** - Professional animations throughout the site
 ✅ **Responsive Navigation** - Works perfectly on mobile and desktop
@@ -11,6 +14,7 @@ Welcome to the Narrow Fitness GYM website! This is a modern, responsive gym webs
 ✅ **Single Pricing Plan** - Clear pricing at LKR 3,000/month + LKR 1,000 admission
 ✅ **Programs Section** - Showcasing different fitness programs
 ✅ **Contact Form** - Easy way for customers to get in touch
+✅ **BMI Calculator** - Built-in tool for members to check their status
 ✅ **Touch Swipe Support** - Swipe through slider on mobile devices
 
 ## 🚀 How to Open the Website

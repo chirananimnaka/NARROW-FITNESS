@@ -14,6 +14,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Bebas+Neue&display=swap"
         rel="stylesheet">
+    <!-- Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 
 <body>
@@ -90,28 +92,28 @@
     <!-- About Section -->
     <section id="about" class="about">
         <div class="container">
-            <div class="section-header">
+            <div class="section-header" data-aos="fade-up">
                 <h2 class="section-title">About Narrow Fitness GYM</h2>
                 <p class="section-subtitle">Your Fitness Journey Starts Here</p>
             </div>
 
             <div class="about-grid">
-                <div class="about-card">
+                <div class="about-card" data-aos="zoom-in" data-aos-delay="100">
                     <div class="card-icon">🏋️</div>
                     <h3>Expert Trainers</h3>
                     <p>Certified professionals dedicated to helping you achieve your fitness goals</p>
                 </div>
-                <div class="about-card">
+                <div class="about-card" data-aos="zoom-in" data-aos-delay="200">
                     <div class="card-icon">⚡</div>
                     <h3>Modern Equipment</h3>
                     <p>State-of-the-art facilities with the latest fitness technology</p>
                 </div>
-                <div class="about-card">
+                <div class="about-card" data-aos="zoom-in" data-aos-delay="300">
                     <div class="card-icon">🎯</div>
                     <h3>Personalized Plans</h3>
                     <p>Customized workout programs tailored to your individual needs</p>
                 </div>
-                <div class="about-card">
+                <div class="about-card" data-aos="zoom-in" data-aos-delay="400">
                     <div class="card-icon">🌟</div>
                     <h3>Community Support</h3>
                     <p>Join a motivating community of fitness enthusiasts</p>
@@ -202,13 +204,13 @@
     <!-- Programs Section -->
     <section id="programs" class="programs">
         <div class="container">
-            <div class="section-header">
+            <div class="section-header" data-aos="fade-up">
                 <h2 class="section-title">Our Programs</h2>
                 <p class="section-subtitle">Choose What Fits Your Goals</p>
             </div>
 
             <div class="programs-grid">
-                <div class="program-card">
+                <div class="program-card" data-aos="fade-right" data-aos-delay="100">
                     <div class="program-image">
                         <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80"
                             alt="Strength Training">
@@ -227,7 +229,7 @@
                     </div>
                 </div>
 
-                <div class="program-card">
+                <div class="program-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="program-image">
                         <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80"
                             alt="Cardio Fitness">
@@ -246,7 +248,7 @@
                     </div>
                 </div>
 
-                <div class="program-card">
+                <div class="program-card" data-aos="fade-left" data-aos-delay="300">
                     <div class="program-image">
                         <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&q=80"
                             alt="Yoga & Flexibility">
@@ -415,7 +417,7 @@
             </div>
 
             <!-- Auth Container (Visible when logged out) -->
-            <div id="auth-container" class="auth-container">
+            <div id="auth-container" class="auth-container" data-aos="zoom-in">
                 <div class="auth-card">
                     <!-- Login Form -->
                     <div id="login-form-box">
@@ -430,6 +432,13 @@
                                 <input type="password" id="loginPassword" required placeholder="••••••••">
                             </div>
                             <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+                            <div class="auth-divider"><span>OR</span></div>
+                            <button type="button" id="googleLoginBtn" class="btn btn-outline"
+                                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"
+                                    height="18" alt="Google">
+                                Continue with Google
+                            </button>
                             <p class="auth-switch">New member? <a href="#" id="showSignup">Create Account</a></p>
                         </form>
                     </div>
@@ -451,6 +460,13 @@
                                 <input type="password" id="signupPassword" required placeholder="Create a password">
                             </div>
                             <button type="submit" class="btn btn-secondary" style="width: 100%;">Sign Up</button>
+                            <div class="auth-divider"><span>OR</span></div>
+                            <button type="button" id="googleSignupBtn" class="btn btn-outline"
+                                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"
+                                    height="18" alt="Google">
+                                Sign Up with Google
+                            </button>
                             <p class="auth-switch">Already have an account? <a href="#" id="showLogin">Sign In</a></p>
                         </form>
                     </div>
@@ -773,7 +789,14 @@
     <!-- PDF Generation Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script type="module" src="script.js"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Animation Library JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
