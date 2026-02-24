@@ -8,6 +8,13 @@
 section {
     scroll-margin-top: 100px;
     /* Offset for fixed header */
+    overflow-x: hidden !important;
+}
+
+.container,
+.portal-container,
+.portal-wrapper {
+    overflow-x: hidden !important;
 }
 
 :root {
@@ -42,9 +49,9 @@ section {
 
 html,
 body {
-    max-width: 100%;
-    overflow-x: hidden;
-    width: 100%;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
     position: relative;
     margin: 0;
     padding: 0;
@@ -1814,34 +1821,49 @@ body {
         left: 0;
     }
 
-    .nav-container {
-        padding: 0 15px;
-        width: 100%;
-    }
-
     .hamburger {
         display: flex;
     }
 
+    .navbar {
+        padding: 10px 0;
+    }
+
+    .nav-container {
+        padding: 0 10px;
+        width: 100%;
+        gap: 5px;
+    }
+
     .logo {
-        font-size: 20px;
+        font-size: 16px;
+        /* Smaller font for mobile */
+        gap: 5px;
+        flex-shrink: 1;
+        min-width: 0;
+    }
+
+    .logo-text {
+        font-size: 14px;
+        white-space: nowrap;
+        /* Prevent wrapping */
     }
 
     .logo-icon {
-        font-size: 24px;
+        font-size: 20px;
     }
 
     .cta-btn {
         display: inline-block;
-        padding: 5px 12px;
-        font-size: 10px;
-        font-weight: 700;
+        padding: 6px 10px;
+        font-size: 9px;
+        font-weight: 800;
         text-transform: uppercase;
-        margin-right: 45px;
-        /* Reduced margin to avoid overflow */
+        margin-right: 40px;
         border-radius: 4px;
         box-shadow: none;
-        letter-spacing: 0.5px;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .hero-title {
@@ -3095,9 +3117,9 @@ body {
 }
 
 @media (max-width: 600px) {
-    body.portal-body {
-        overflow-x: hidden;
-        width: 100%;
+    body {
+        overflow-x: hidden !important;
+        width: 100% !important;
         position: relative;
     }
 
