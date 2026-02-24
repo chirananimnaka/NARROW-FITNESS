@@ -1076,10 +1076,9 @@ body {
 .whatsapp-float {
     position: fixed;
     bottom: 20px;
-    left: 20px;
-    /* Moved to "start" (left) as requested */
-    width: 50px;
-    height: 50px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
     background: #25D366;
     border-radius: 50%;
     display: flex;
@@ -1087,7 +1086,6 @@ body {
     justify-content: center;
     box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5);
     z-index: 2000;
-    /* Higher z-index to stay on top */
     transition: var(--transition-smooth);
     text-decoration: none;
 }
@@ -3145,10 +3143,24 @@ body {
 }
 
 @media (max-width: 600px) {
+
+    html,
     body {
         overflow-x: hidden !important;
         width: 100% !important;
-        position: relative;
+        position: relative !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Prevent AOS from causing initial scrollbar */
+    [data-aos] {
+        opacity: 0;
+        transition-property: transform, opacity;
+    }
+
+    [data-aos].aos-animate {
+        opacity: 1;
     }
 
     .dash-top-bar {
