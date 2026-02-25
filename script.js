@@ -395,13 +395,44 @@ const dailyPlans = [
     { day: "Saturday", focus: "Active Fun / Sports 🏀", tasks: ["Play a Sport", "Hiking", "Swimming"] }
 ];
 
+// Helper to find percentage improvement in the last 7 days compared to previous 7 days
+function getWeeklyImprovement(data) {
+    if (data.length < 2) return 0;
+
+    const types = [...new Set(data.map(e => e.type))];
+    let maxImprovement = 0;
+
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+    const fourteenDaysAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
+
+    types.forEach(type => {
+        const typeData = data.filter(e => e.type === type);
+
+        // Max value in last 7 days
+        const lastWeek = typeData.filter(e => new Date(e.date) >= sevenDaysAgo);
+        const prevWeek = typeData.filter(e => new Date(e.date) >= fourteenDaysAgo && new Date(e.date) < sevenDaysAgo);
+
+        if (lastWeek.length > 0 && prevWeek.length > 0) {
+            const lastMax = Math.max(...lastWeek.map(e => e.value));
+            const prevMax = Math.max(...prevWeek.map(e => e.value));
+
+            if (prevMax > 0) {
+                const improvement = ((lastMax - prevMax) / prevMax) * 100;
+                if (improvement > maxImprovement) maxImprovement = improvement;
+            }
+        }
+    });
+    return maxImprovement;
+}
+
 const badgeDefinitions = [
     { id: 'start', icon: '🌱', name: 'Fresh Start', desc: 'Log your first entry', check: (d) => d.length >= 1 },
-    { id: 'dedicated', icon: '🔥', name: 'Dedicated', desc: '3 Day Streak', check: (d) => calculateStreak(d) >= 3 },
-    { id: 'pro', icon: '⚡', name: 'Consistent', desc: '10 Total Entries', check: (d) => d.length >= 10 },
-    { id: 'heavy', icon: '🦍', name: 'Heavy Lifter', desc: 'Lift 100kg+', check: (d) => d.some(x => x.value >= 100) },
-    { id: 'elite', icon: '👑', name: 'Elite Club', desc: 'Lift 140kg+', check: (d) => d.some(x => x.value >= 140) },
-    { id: 'veteran', icon: '🛡️', name: 'Veteran', desc: '30 Total Entries', check: (d) => d.length >= 30 }
+    { id: 'gainer', icon: '📈', name: 'Steady Gainer', desc: '2% Weekly Increase', check: (d) => getWeeklyImprovement(d) >= 2 },
+    { id: 'power', icon: '🔥', name: 'Power Surge', desc: '5% Weekly Increase', check: (d) => getWeeklyImprovement(d) >= 5 },
+    { id: 'hulk', icon: '🦍', name: 'Hulk Mode', desc: '10% Weekly Increase', check: (d) => getWeeklyImprovement(d) >= 10 },
+    { id: 'beast', icon: '🏆', name: 'Beast Mode', desc: '15% Weekly Increase', check: (d) => getWeeklyImprovement(d) >= 15 },
+    { id: 'legend', icon: '🛡️', name: 'Consistent', desc: '20 Total Entries', check: (d) => d.length >= 20 }
 ];
 
 const classSchedule = {
@@ -426,19 +457,22 @@ function updateDashboardUI() {
 }
 
 function updateDailyPlan() {
-    if (!currentDayDisplay || !dailyPlanContent) return;
-    const today = new Date().getDay(); // 0 = Sunday
-    const plan = dailyPlans[today];
+    if (!currentDayDisplay) return;
+
+    // Explicitly use Sri Lanka Timezone (GMT+5:30) for day calculation
+    const options = { timeZone: 'Asia/Colombo', weekday: 'long' };
+    const slDayName = new Intl.DateTimeFormat('en-US', options).format(new Date());
+
+    // Find the plan based on the day name
+    const plan = dailyPlans.find(p => p.day === slDayName) || dailyPlans[0];
 
     currentDayDisplay.textContent = plan.day;
 
-    let html = `<h4>Focus: ${plan.focus}</h4><ul>`;
-    plan.tasks.forEach(task => {
-        html += `<li><input type="checkbox"> ${task}</li>`;
-    });
-    html += `</ul>`;
-
-    dailyPlanContent.innerHTML = html;
+    // Task list removed as requested to keep the dashboard clean
+    if (dailyPlanContent) {
+        dailyPlanContent.innerHTML = '';
+        dailyPlanContent.style.display = 'none';
+    }
 }
 
 function updateBadges() {
@@ -465,9 +499,10 @@ function updateBadges() {
 
 function updateStreak() {
     if (!streakCountEl) return;
-    const streak = calculateStreak(attendanceData);
-    animateValue(streakCountEl, 0, streak, 1500);
+    const totalDays = [...new Set(attendanceData)].length;
+    animateValue(streakCountEl, 0, totalDays, 1500);
 }
+
 
 function animateValue(obj, start, end, duration) {
     let startTimestamp = null;
@@ -532,9 +567,10 @@ function calculateStreak(data) {
 
 function updateStreak() {
     if (!streakCountEl) return;
-    const streak = calculateStreak(attendanceData);
-    animateValue(streakCountEl, 0, streak, 1500);
+    const totalDays = [...new Set(attendanceData)].length;
+    animateValue(streakCountEl, 0, totalDays, 1500);
 }
+
 
 function updateCheckInStatus() {
     const statusEl = document.getElementById('checkInStatus');

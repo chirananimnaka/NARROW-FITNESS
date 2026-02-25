@@ -164,11 +164,11 @@
                 <!-- Stats Grid -->
                 <div class="stats-row" data-aos="fade-up">
                     <div class="stat-box">
-                        <span class="stat-label">Workout Streak</span>
+                        <span class="stat-label">Total Workouts</span>
                         <div class="stat-value"><span id="streakCount" class="animate-number">0</span>
                             <small>Days</small>
                         </div>
-                        <div class="stat-trend hot">🔥 On Fire</div>
+                        <div class="stat-trend hot">🔥 All Time</div>
                     </div>
                     <div class="stat-box">
                         <span class="stat-label">Achievement Badges</span>
@@ -178,8 +178,10 @@
                     </div>
                     <div class="stat-box">
                         <span class="stat-label">Focus of the Day</span>
-                        <div class="stat-value" id="currentDayDisplay" style="font-size: 24px;">Monday</div>
+                        <div class="stat-value" id="currentDayDisplay" style="font-size: 24px;">Wednesday</div>
                         <div class="stat-trend highlight">📅 Today</div>
+                        <div id="dailyPlanContent" style="display:none;"></div>
+                        <!-- Hidden storage for tasks if needed -->
                     </div>
                 </div>
 
@@ -247,23 +249,29 @@
                     </div>
                 </div>
 
-                <!-- Full Width Trophy Case at Bottom -->
-                <div class="dash-card badges-card full-width-badges" data-aos="fade-up" data-aos-delay="300">
-                    <div class="card-header">
-                        <h3>🏆 Trophy Case</h3>
+                <!-- Bottom Row: Trophy Case + Master Report -->
+                <div class="bottom-grid-row" data-aos="fade-up" data-aos-delay="300">
+                    <div class="dash-card badges-card">
+                        <div class="card-header">
+                            <h3>🏆 Trophy Case</h3>
+                        </div>
+                        <div class="badges-grid-minimal" id="badgesGrid">
+                            <!-- Injected via JS -->
+                        </div>
                     </div>
-                    <div class="badges-grid-minimal" id="badgesGrid">
-                        <!-- Injected via JS -->
+                    <div class="dash-card report-bottom-card">
+                        <div class="card-header">
+                            <h3>📊 Master Report</h3>
+                        </div>
+                        <div class="report-card-content">
+                            <p>Download your complete transformation history in a detailed PDF report.</p>
+                            <button id="creativePdfBtn" class="btn-report-card-action">
+                                Download PDF Report ↪️
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Floating Report Button -->
-        <button id="creativePdfBtn" class="btn-floating-report" title="Generate Detailed PDF Report">
-            📊 Download Master Report
-        </button>
-        </div>
         </div>
     </main>
 
