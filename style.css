@@ -514,12 +514,16 @@ body {
 .programs {
     padding: var(--section-padding);
     background: var(--dark-bg);
+    overflow: visible !important;
+    position: relative;
+    z-index: 1;
 }
 
 .programs-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 30px;
+    overflow: visible !important;
 }
 
 .program-card {
